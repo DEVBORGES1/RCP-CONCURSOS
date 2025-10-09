@@ -210,17 +210,14 @@ Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes
 
 ## 👥 Equipe
 
-- **Desenvolvedor Principal**: [Seu Nome]
-- **Design**: [Nome do Designer]
-- **Testes**: [Nome do Tester]
+- **Desenvolvedor Principal**: DEVBORGES1
+- **Design**: DEVBORGES1 / FABIANO PIROLLI
+- **Testes**: DEVBORGES1 / FABIANO PIROLLI
 
 ## 📞 Suporte
 
 Para dúvidas, sugestões ou problemas:
-- **Email**: suporte@sistemaconcursos.com
-- **GitHub Issues**: [Link para issues]
-- **Documentação**: [Link para docs]
-
+- **Email**: Bstech.ti@gmail.com
 ---
 
 **Desenvolvido com ❤️ para candidatos a concursos públicos**
