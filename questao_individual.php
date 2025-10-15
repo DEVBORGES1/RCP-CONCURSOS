@@ -143,12 +143,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['responder'])) {
     }
     
     .alert-success {
-        background: linear-gradient(45deg, #43e97b, #38f9d7);
+        background: linear-gradient(45deg, #ff4444, #cc0000);
         color: white;
     }
     
     .alert-danger {
-        background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        background: linear-gradient(45deg, #ff4444, #cc0000);
         color: white;
     }
     
@@ -158,11 +158,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['responder'])) {
         align-items: center;
         margin-bottom: 20px;
         padding-bottom: 15px;
-        border-bottom: 2px solid #e9ecef;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.3);
     }
     
     .questao-header h3 {
-        color: #2c3e50;
+        color: white;
         margin: 0;
         font-size: 1.3rem;
     }
@@ -173,7 +173,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['responder'])) {
     }
     
     .disciplina-tag {
-        background: linear-gradient(45deg, #667eea, #764ba2);
+        background: linear-gradient(45deg, #ff4444, #cc0000);
         color: white;
         padding: 5px 15px;
         border-radius: 20px;
@@ -182,7 +182,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['responder'])) {
     }
     
     .respondida-tag {
-        background: #28a745;
+        background: #ff4444;
         color: white;
         padding: 5px 15px;
         border-radius: 20px;
@@ -193,12 +193,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['responder'])) {
     .enunciado {
         font-size: 1.1rem;
         line-height: 1.6;
-        color: #2c3e50;
+        color: white;
         margin-bottom: 25px;
         padding: 20px;
-        background: #f8f9fa;
+        background: rgba(255, 255, 255, 0.1);
         border-radius: 10px;
-        border-left: 4px solid #667eea;
+        border-left: 4px solid #ff4444;
     }
     
     .alternativas {
@@ -213,21 +213,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['responder'])) {
         align-items: center;
         gap: 15px;
         padding: 15px 20px;
-        border: 2px solid #e9ecef;
+        border: 2px solid rgba(255, 255, 255, 0.3);
         border-radius: 10px;
         cursor: pointer;
         transition: all 0.3s ease;
-        background: white;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
     }
     
     .alternativa:hover {
-        border-color: #667eea;
-        background: #f8f9ff;
+        border-color: #ff4444;
+        background: rgba(255, 255, 255, 0.15);
     }
     
     .alternativa.selected {
-        border-color: #667eea;
-        background: #f8f9ff;
+        border-color: #ff4444;
+        background: rgba(255, 255, 255, 0.2);
     }
     
     .alternativa input[type="radio"] {

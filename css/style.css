@@ -6,11 +6,18 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #000000 0%, #1a0000 25%, #330000 50%, #660000 75%, #cc0000 100%);
+    background-attachment: fixed;
     min-height: 100vh;
     color: #333;
     line-height: 1.6;
+}
+
+/* Homepage specific background */
+body.homepage {
+    background: linear-gradient(135deg, #000000 0%, #1a0000 25%, #330000 50%, #660000 75%, #cc0000 100%);
+    background-attachment: fixed;
 }
 
 .container {
@@ -21,11 +28,12 @@ body {
 
 /* Header */
 .header {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 15px;
     margin-bottom: 30px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .header-content {
@@ -36,13 +44,13 @@ body {
 }
 
 .header h1 {
-    color: #2c3e50;
+    color: white;
     font-size: 1.8rem;
     font-weight: 700;
 }
 
 .header h1 i {
-    color: #667eea;
+    color: #ff4444;
     margin-right: 10px;
 }
 
@@ -94,22 +102,24 @@ body {
 }
 
 .welcome-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 15px;
     padding: 30px;
     text-align: center;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    color: white;
 }
 
 .welcome-card h2 {
-    color: #2c3e50;
+    color: white;
     font-size: 2rem;
     margin-bottom: 10px;
 }
 
 .welcome-card p {
-    color: #666;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 1.1rem;
     margin-bottom: 20px;
 }
@@ -118,7 +128,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+    background: linear-gradient(45deg, #ff4444, #cc0000);
     color: white;
     padding: 10px 20px;
     border-radius: 25px;
@@ -138,19 +148,22 @@ body {
 }
 
 .stat-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 15px;
     padding: 25px;
     display: flex;
     align-items: center;
     gap: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease;
+    color: white;
 }
 
 .stat-card:hover {
     transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .stat-icon {
@@ -164,19 +177,19 @@ body {
     color: white;
 }
 
-.stat-card:nth-child(1) .stat-icon { background: linear-gradient(45deg, #667eea, #764ba2); }
-.stat-card:nth-child(2) .stat-icon { background: linear-gradient(45deg, #f093fb, #f5576c); }
-.stat-card:nth-child(3) .stat-icon { background: linear-gradient(45deg, #4facfe, #00f2fe); }
-.stat-card:nth-child(4) .stat-icon { background: linear-gradient(45deg, #43e97b, #38f9d7); }
+.stat-card:nth-child(1) .stat-icon { background: linear-gradient(45deg, #ff4444, #cc0000); }
+.stat-card:nth-child(2) .stat-icon { background: linear-gradient(45deg, #ff6666, #ff3333); }
+.stat-card:nth-child(3) .stat-icon { background: linear-gradient(45deg, #ff8888, #ff5555); }
+.stat-card:nth-child(4) .stat-icon { background: linear-gradient(45deg, #ffaaaa, #ff7777); }
 
 .stat-content h3 {
     font-size: 2rem;
-    color: #2c3e50;
+    color: white;
     margin-bottom: 5px;
 }
 
 .stat-content p {
-    color: #666;
+    color: rgba(255, 255, 255, 0.8);
     font-weight: 500;
 }
 
@@ -186,26 +199,28 @@ body {
 }
 
 .progress-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 15px;
     padding: 25px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    color: white;
 }
 
 .progress-card h3 {
-    color: #2c3e50;
+    color: white;
     margin-bottom: 20px;
     font-size: 1.3rem;
 }
 
 .progress-card h3 i {
-    color: #667eea;
+    color: #ff4444;
     margin-right: 10px;
 }
 
 .progress-bar {
-    background: #e9ecef;
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 10px;
     height: 20px;
     overflow: hidden;
@@ -213,7 +228,7 @@ body {
 }
 
 .progress-fill {
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(45deg, #ff4444, #cc0000);
     height: 100%;
     border-radius: 10px;
     transition: width 0.3s ease;
@@ -225,21 +240,23 @@ body {
 }
 
 .ranking-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 15px;
     padding: 25px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    color: white;
 }
 
 .ranking-card h3 {
-    color: #2c3e50;
+    color: white;
     margin-bottom: 20px;
     font-size: 1.3rem;
 }
 
 .ranking-card h3 i {
-    color: #f39c12;
+    color: #ff4444;
     margin-right: 10px;
 }
 
@@ -253,18 +270,19 @@ body {
     align-items: center;
     padding: 15px;
     margin-bottom: 10px;
-    background: #f8f9fa;
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 10px;
     transition: all 0.3s ease;
+    color: white;
 }
 
 .ranking-item:hover {
-    background: #e9ecef;
+    background: rgba(255, 255, 255, 0.2);
     transform: translateX(5px);
 }
 
 .ranking-item.current-user {
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(45deg, #ff4444, #cc0000);
     color: white;
 }
 
@@ -282,7 +300,7 @@ body {
 
 .points {
     font-weight: 600;
-    color: #667eea;
+    color: #ff4444;
 }
 
 .current-user .points {
@@ -292,9 +310,9 @@ body {
 .user-position {
     text-align: center;
     padding: 15px;
-    background: #e9ecef;
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 10px;
-    color: #2c3e50;
+    color: white;
 }
 
 /* Achievements Section */
@@ -303,21 +321,23 @@ body {
 }
 
 .achievements-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 15px;
     padding: 25px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    color: white;
 }
 
 .achievements-card h3 {
-    color: #2c3e50;
+    color: white;
     margin-bottom: 20px;
     font-size: 1.3rem;
 }
 
 .achievements-card h3 i {
-    color: #f39c12;
+    color: #ff4444;
     margin-right: 10px;
 }
 
@@ -337,13 +357,13 @@ body {
 }
 
 .achievement-item.unlocked {
-    background: linear-gradient(45deg, #43e97b, #38f9d7);
+    background: linear-gradient(45deg, #ff4444, #cc0000);
     color: white;
 }
 
 .achievement-item.locked {
-    background: #f8f9fa;
-    color: #666;
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
     opacity: 0.6;
 }
 
@@ -370,13 +390,13 @@ body {
 
 /* Quick Actions */
 .quick-actions h3 {
-    color: #2c3e50;
+    color: white;
     margin-bottom: 20px;
     font-size: 1.3rem;
 }
 
 .quick-actions h3 i {
-    color: #667eea;
+    color: #ff4444;
     margin-right: 10px;
 }
 
@@ -387,28 +407,30 @@ body {
 }
 
 .action-btn {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 15px;
     padding: 25px;
     text-decoration: none;
-    color: #2c3e50;
+    color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
 }
 
 .action-btn:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
 }
 
 .action-btn i {
     font-size: 2rem;
-    color: #667eea;
+    color: #ff4444;
 }
 
 .action-btn span {

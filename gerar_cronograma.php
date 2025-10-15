@@ -295,22 +295,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         
         .alert-success {
-            background: linear-gradient(45deg, #43e97b, #38f9d7);
+            background: linear-gradient(45deg, #ff4444, #cc0000);
             color: white;
         }
         
         .alert-error {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            background: linear-gradient(45deg, #ff4444, #cc0000);
             color: white;
         }
         
         .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 15px;
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            color: white;
         }
         
         .cronograma-form {
@@ -332,27 +334,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .form-group label {
             margin-bottom: 8px;
             font-weight: 600;
-            color: #2c3e50;
+            color: white;
         }
         
         .form-group select,
         .form-group input {
             padding: 12px 15px;
-            border: 2px solid #e9ecef;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 8px;
             font-size: 1rem;
             transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .form-group select::placeholder,
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
         }
         
         .form-group select:focus,
         .form-group input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #ff4444;
+            box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.2);
+            background: rgba(255, 255, 255, 0.15);
         }
         
         .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #ff4444, #cc0000);
             color: white;
             padding: 15px 30px;
             border: none;
@@ -369,7 +379,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 25px rgba(255, 68, 68, 0.4);
         }
         
         .btn-secondary {

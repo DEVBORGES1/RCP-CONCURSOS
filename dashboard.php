@@ -18,10 +18,16 @@ $conquistas = $gamificacao->obterConquistasUsuario($_SESSION["usuario_id"]);
 $ranking = $gamificacao->obterRankingMensal(5);
 $posicao_usuario = $gamificacao->obterPosicaoUsuario($_SESSION["usuario_id"]);
 
-// Calcular estatísticas
-$total_questoes = $dados_usuario['questoes_respondidas'] ?? 0;
-$questoes_corretas = $dados_usuario['questoes_corretas'] ?? 0;
+// Calcular estatísticas com valores padrão seguros
+$total_questoes = isset($dados_usuario['questoes_respondidas']) ? (int)$dados_usuario['questoes_respondidas'] : 0;
+$questoes_corretas = isset($dados_usuario['questoes_corretas']) ? (int)$dados_usuario['questoes_corretas'] : 0;
 $percentual_acerto = $total_questoes > 0 ? round(($questoes_corretas / $total_questoes) * 100, 1) : 0;
+
+// Garantir que os dados do usuário tenham valores padrão
+$nome_usuario = isset($dados_usuario['nome']) ? $dados_usuario['nome'] : 'Usuário';
+$nivel_usuario = isset($dados_usuario['nivel']) ? (int)$dados_usuario['nivel'] : 1;
+$pontos_usuario = isset($dados_usuario['pontos_total']) ? (int)$dados_usuario['pontos_total'] : 0;
+$streak_usuario = isset($dados_usuario['streak_dias']) ? (int)$dados_usuario['streak_dias'] : 0;
 
 // Obter editais do usuário
 $stmt = $pdo->prepare("SELECT COUNT(*) FROM editais WHERE usuario_id = ?");
@@ -50,8 +56,8 @@ $total_simulados = $stmt->fetchColumn();
                 <h1><i class="fas fa-graduation-cap"></i> Sistema de Concursos</h1>
                 <div class="user-info">
                     <div class="user-level">
-                        <span class="level-badge">Nível <?= $dados_usuario['nivel'] ?? 1 ?></span>
-                        <span class="points"><?= $dados_usuario['pontos_total'] ?? 0 ?> pts</span>
+                        <span class="level-badge">Nível <?= $nivel_usuario ?></span>
+                        <span class="points"><?= $pontos_usuario ?> pts</span>
                     </div>
                     <a href="logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i></a>
                 </div>
@@ -61,11 +67,11 @@ $total_simulados = $stmt->fetchColumn();
         <!-- Welcome Section -->
         <section class="welcome-section">
             <div class="welcome-card">
-                <h2>Olá, <?= htmlspecialchars($dados_usuario['nome']) ?>! 👋</h2>
+                <h2>Olá, <?= htmlspecialchars($nome_usuario) ?>! 👋</h2>
                 <p>Continue estudando para alcançar seus objetivos!</p>
                 <div class="streak-info">
                     <i class="fas fa-fire"></i>
-                    <span><?= $dados_usuario['streak_dias'] ?? 0 ?> dias seguidos</span>
+                    <span><?= $streak_usuario ?> dias seguidos</span>
                 </div>
             </div>
         </section>
@@ -118,9 +124,9 @@ $total_simulados = $stmt->fetchColumn();
             <div class="progress-card">
                 <h3><i class="fas fa-chart-line"></i> Seu Progresso</h3>
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: <?= min(100, ($dados_usuario['pontos_total'] ?? 0) / 10) ?>%"></div>
+                    <div class="progress-fill" style="width: <?= min(100, $pontos_usuario / 10) ?>%"></div>
                 </div>
-                <p><?= $dados_usuario['pontos_total'] ?? 0 ?> pontos para o próximo nível</p>
+                <p><?= $pontos_usuario ?> pontos para o próximo nível</p>
             </div>
         </section>
 

@@ -335,7 +335,7 @@ $questoes_respondidas = $stmt->fetchColumn();
 
     <style>
         .alert {
-            background: linear-gradient(45deg, #17a2b8, #138496);
+            background: linear-gradient(45deg, #ff4444, #cc0000);
             color: white;
             padding: 15px 20px;
             border-radius: 10px;
@@ -346,12 +346,14 @@ $questoes_respondidas = $stmt->fetchColumn();
         }
         
         .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 15px;
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            color: white;
         }
         
         .form-row {
@@ -373,15 +375,19 @@ $questoes_respondidas = $stmt->fetchColumn();
         }
         
         .questao-card {
-            background: #f8f9fa;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             padding: 20px;
             transition: all 0.3s ease;
+            color: white;
         }
         
         .questao-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
         
         .questao-header {
@@ -392,7 +398,7 @@ $questoes_respondidas = $stmt->fetchColumn();
         }
         
         .questao-header h3 {
-            color: #2c3e50;
+            color: white;
             margin: 0;
         }
         
@@ -402,7 +408,7 @@ $questoes_respondidas = $stmt->fetchColumn();
         }
         
         .disciplina-tag {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #ff4444, #cc0000);
             color: white;
             padding: 3px 10px;
             border-radius: 15px;
@@ -410,7 +416,7 @@ $questoes_respondidas = $stmt->fetchColumn();
         }
         
         .respondida-tag {
-            background: #28a745;
+            background: #ff4444;
             color: white;
             padding: 3px 10px;
             border-radius: 15px;
@@ -418,7 +424,7 @@ $questoes_respondidas = $stmt->fetchColumn();
         }
         
         .enunciado {
-            color: #666;
+            color: rgba(255, 255, 255, 0.8);
             margin-bottom: 15px;
             line-height: 1.5;
         }

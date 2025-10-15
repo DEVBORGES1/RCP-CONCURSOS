@@ -224,7 +224,7 @@ $gamificacao = new Gamificacao($pdo);
 
     <style>
         .timer {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #ff4444, #cc0000);
             color: white;
             padding: 10px 20px;
             border-radius: 25px;
@@ -239,22 +239,24 @@ $gamificacao = new Gamificacao($pdo);
         }
         
         .resultado-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            color: white;
         }
         
         .resultado-header h2 {
-            color: #2c3e50;
+            color: white;
             text-align: center;
             margin-bottom: 30px;
             font-size: 1.8rem;
         }
         
         .resultado-header h2 i {
-            color: #f39c12;
+            color: #ff4444;
             margin-right: 10px;
         }
         
@@ -267,19 +269,23 @@ $gamificacao = new Gamificacao($pdo);
         .stat-item {
             text-align: center;
             padding: 20px;
-            background: #f8f9fa;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             transition: all 0.3s ease;
+            color: white;
         }
         
         .stat-item:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
         
         .stat-item i {
             font-size: 2rem;
-            color: #667eea;
+            color: #ff4444;
             margin-bottom: 10px;
         }
         
@@ -287,12 +293,12 @@ $gamificacao = new Gamificacao($pdo);
             display: block;
             font-size: 1.5rem;
             font-weight: 700;
-            color: #2c3e50;
+            color: white;
             margin-bottom: 5px;
         }
         
         .stat-item small {
-            color: #666;
+            color: rgba(255, 255, 255, 0.8);
             font-size: 0.9rem;
         }
         
@@ -301,8 +307,9 @@ $gamificacao = new Gamificacao($pdo);
         }
         
         .questao-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 15px;
             padding: 30px;
             margin-bottom: 20px;

@@ -306,20 +306,20 @@ $dados_usuario = $gamificacao->obterDadosUsuario($_SESSION["usuario_id"]);
         }
         
         .insight-sucesso {
-            background: linear-gradient(45deg, #43e97b, #38f9d7);
-            border-left-color: #28a745;
+            background: linear-gradient(45deg, #ff4444, #cc0000);
+            border-left-color: #ff4444;
             color: white;
         }
         
         .insight-atencao {
-            background: linear-gradient(45deg, #f093fb, #f5576c);
-            border-left-color: #dc3545;
+            background: linear-gradient(45deg, #ff6666, #ff3333);
+            border-left-color: #ff4444;
             color: white;
         }
         
         .insight-info {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border-left-color: #007bff;
+            background: linear-gradient(45deg, #ff8888, #ff5555);
+            border-left-color: #ff4444;
             color: white;
         }
         
@@ -345,19 +345,19 @@ $dados_usuario = $gamificacao->obterDadosUsuario($_SESSION["usuario_id"]);
         .level-progress {
             margin-top: 20px;
             padding: 20px;
-            background: #f8f9fa;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
         }
         
         .level-progress h4 {
             margin: 0 0 10px 0;
-            color: #2c3e50;
+            color: white;
         }
         
         .progress-bar {
             width: 100%;
             height: 20px;
-            background: #e9ecef;
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             overflow: hidden;
             margin-bottom: 10px;
@@ -365,7 +365,7 @@ $dados_usuario = $gamificacao->obterDadosUsuario($_SESSION["usuario_id"]);
         
         .progress-fill {
             height: 100%;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #ff4444, #cc0000);
             transition: width 0.3s ease;
         }
         

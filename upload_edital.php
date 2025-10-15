@@ -204,27 +204,29 @@ function gerarTextoSimuladoEdital() {
         }
         
         .alert-success {
-            background: linear-gradient(45deg, #43e97b, #38f9d7);
+            background: linear-gradient(45deg, #ff4444, #cc0000);
             color: white;
         }
         
         .alert-warning {
-            background: linear-gradient(45deg, #f093fb, #f5576c);
+            background: linear-gradient(45deg, #ff6666, #ff3333);
             color: white;
         }
         
         .alert-error {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            background: linear-gradient(45deg, #ff4444, #cc0000);
             color: white;
         }
         
         .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 15px;
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            color: white;
         }
         
         .upload-form {
@@ -239,7 +241,7 @@ function gerarTextoSimuladoEdital() {
             display: block;
             margin-bottom: 10px;
             font-weight: 600;
-            color: #2c3e50;
+            color: white;
         }
         
         .file-input-wrapper {
@@ -262,33 +264,34 @@ function gerarTextoSimuladoEdital() {
             align-items: center;
             justify-content: center;
             padding: 40px 20px;
-            border: 3px dashed #667eea;
+            border: 3px dashed #ff4444;
             border-radius: 15px;
-            background: linear-gradient(45deg, #f8f9ff, #e8f0ff);
+            background: rgba(255, 255, 255, 0.1);
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
+            color: white;
         }
         
         .file-input-label:hover {
-            border-color: #764ba2;
-            background: linear-gradient(45deg, #e8f0ff, #d8e8ff);
+            border-color: #cc0000;
+            background: rgba(255, 255, 255, 0.15);
             transform: translateY(-2px);
         }
         
         .file-input-label i {
             font-size: 2.5rem;
-            color: #667eea;
+            color: #ff4444;
             margin-bottom: 10px;
         }
         
         .file-input-label span {
-            color: #2c3e50;
+            color: white;
             font-weight: 500;
         }
         
         .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #ff4444, #cc0000);
             color: white;
             padding: 15px 30px;
             border: none;
@@ -305,7 +308,7 @@ function gerarTextoSimuladoEdital() {
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 25px rgba(255, 68, 68, 0.4);
         }
         
         .features-grid {

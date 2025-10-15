@@ -13,12 +13,13 @@ class Gamificacao {
         try {
             $this->pdo->beginTransaction();
             
+            // Garantir que o usuário tenha um registro de progresso
+            $this->garantirProgressoUsuario($usuario_id);
+            
             // Atualizar progresso do usuário
-            $sql = "INSERT INTO usuarios_progresso (usuario_id, pontos_total) 
-                    VALUES (?, ?) 
-                    ON DUPLICATE KEY UPDATE pontos_total = pontos_total + ?";
+            $sql = "UPDATE usuarios_progresso SET pontos_total = pontos_total + ? WHERE usuario_id = ?";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$usuario_id, $pontos, $pontos]);
+            $stmt->execute([$pontos, $usuario_id]);
             
             // Calcular novo nível
             $novo_nivel = $this->calcularNivel($usuario_id);
@@ -36,6 +37,20 @@ class Gamificacao {
         } catch (Exception $e) {
             $this->pdo->rollBack();
             return false;
+        }
+    }
+    
+    // Garantir que o usuário tenha um registro de progresso
+    public function garantirProgressoUsuario($usuario_id) {
+        $sql = "SELECT COUNT(*) FROM usuarios_progresso WHERE usuario_id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$usuario_id]);
+        
+        if ($stmt->fetchColumn() == 0) {
+            $sql = "INSERT INTO usuarios_progresso (usuario_id, nivel, pontos_total, streak_dias, ultimo_login) 
+                    VALUES (?, 1, 0, 0, ?)";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$usuario_id, date('Y-m-d')]);
         }
     }
     
@@ -151,6 +166,9 @@ class Gamificacao {
     
     // Atualizar streak do usuário
     public function atualizarStreak($usuario_id) {
+        // Garantir que o usuário tenha um registro de progresso
+        $this->garantirProgressoUsuario($usuario_id);
+        
         $sql = "SELECT ultimo_login FROM usuarios_progresso WHERE usuario_id = ?";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$usuario_id]);
@@ -202,6 +220,9 @@ class Gamificacao {
     
     // Obter dados do usuário
     public function obterDadosUsuario($usuario_id) {
+        // Garantir que o usuário tenha um registro de progresso
+        $this->garantirProgressoUsuario($usuario_id);
+        
         $sql = "SELECT u.nome, u.email, p.nivel, p.pontos_total, p.streak_dias,
                        (SELECT COUNT(*) FROM respostas_usuario WHERE usuario_id = ?) as questoes_respondidas,
                        (SELECT COUNT(*) FROM respostas_usuario WHERE usuario_id = ? AND correta = 1) as questoes_corretas
@@ -211,7 +232,22 @@ class Gamificacao {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$usuario_id, $usuario_id, $usuario_id]);
         
-        return $stmt->fetch();
+        $dados = $stmt->fetch();
+        
+        // Garantir que sempre retorne dados válidos
+        if (!$dados) {
+            return [
+                'nome' => 'Usuário',
+                'email' => '',
+                'nivel' => 1,
+                'pontos_total' => 0,
+                'streak_dias' => 0,
+                'questoes_respondidas' => 0,
+                'questoes_corretas' => 0
+            ];
+        }
+        
+        return $dados;
     }
     
     // Obter conquistas do usuário

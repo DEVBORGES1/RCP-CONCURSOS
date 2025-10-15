@@ -187,7 +187,7 @@ class SistemaProgressoAvancado {
         $metas = [];
         
         // Meta de questões
-        $questoes_atual = $progresso['questoes_unicas_respondidas'];
+        $questoes_atual = $progresso['questoes_unicas_respondidas'] ?? 0;
         $proxima_meta_questoes = $this->calcularProximaMeta($questoes_atual, [10, 25, 50, 100, 250, 500, 1000]);
         if ($proxima_meta_questoes) {
             $metas[] = [
@@ -202,7 +202,7 @@ class SistemaProgressoAvancado {
         }
         
         // Meta de taxa de acerto
-        $taxa_atual = $progresso['taxa_acerto'];
+        $taxa_atual = $progresso['taxa_acerto'] ?? 0;
         if ($taxa_atual < 80) {
             $metas[] = [
                 'tipo' => 'taxa_acerto',
@@ -216,7 +216,7 @@ class SistemaProgressoAvancado {
         }
         
         // Meta de streak
-        $streak_atual = $progresso['streak_dias'];
+        $streak_atual = $progresso['streak_dias'] ?? 0;
         $proxima_meta_streak = $this->calcularProximaMeta($streak_atual, [3, 7, 14, 30, 60, 100]);
         if ($proxima_meta_streak) {
             $metas[] = [
@@ -233,160 +233,9 @@ class SistemaProgressoAvancado {
         return $metas;
     }
     
-    /**
-     * Obter conquistas recentes e próximas
-     */
-    public function obterConquistasRecentes($usuario_id) {
-        $sql = "SELECT 
-                    c.*, 
-                    uc.data_conquista,
-                    CASE WHEN uc.id IS NOT NULL THEN 1 ELSE 0 END as conquistada
-                FROM conquistas c
-                LEFT JOIN usuarios_conquistas uc ON c.id = uc.conquista_id AND uc.usuario_id = ?
-                ORDER BY 
-                    CASE WHEN uc.id IS NOT NULL THEN uc.data_conquista END DESC,
-                    c.pontos_necessarios ASC";
-        
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$usuario_id]);
-        $conquistas = $stmt->fetchAll();
-        
-        // Separar conquistadas e próximas
-        $conquistas_recentes = array_filter($conquistas, function($c) { return $c['conquistada']; });
-        $proximas_conquistas = array_filter($conquistas, function($c) { return !$c['conquistada']; });
-        
-        return [
-            'recentes' => array_slice($conquistas_recentes, 0, 5),
-            'proximas' => array_slice($proximas_conquistas, 0, 5),
-            'total_conquistadas' => count($conquistas_recentes),
-            'total_disponiveis' => count($conquistas)
-        ];
-    }
     
-    /**
-     * Obter estatísticas temporais (últimos 30 dias)
-     */
-    public function obterEstatisticasTemporais($usuario_id) {
-        $sql = "SELECT 
-                    DATE(r.data_resposta) as data_estudo,
-                    COUNT(r.id) as questoes_respondidas,
-                    SUM(CASE WHEN r.correta = 1 THEN 1 ELSE 0 END) as questoes_corretas,
-                    AVG(CASE WHEN r.correta = 1 THEN 1 ELSE 0 END) * 100 as taxa_acerto_dia,
-                    SUM(r.pontos_ganhos) as pontos_dia
-                FROM respostas_usuario r
-                WHERE r.usuario_id = ? 
-                AND r.data_resposta >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-                GROUP BY DATE(r.data_resposta)
-                ORDER BY data_estudo DESC";
-        
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$usuario_id]);
-        $dados_diarios = $stmt->fetchAll();
-        
-        // Calcular tendências
-        $tendencias = $this->calcularTendencias($dados_diarios);
-        
-        return [
-            'dados_diarios' => $dados_diarios,
-            'tendencias' => $tendencias,
-            'melhor_dia' => $this->encontrarMelhorDia($dados_diarios),
-            'consistencia_semanal' => $this->calcularConsistenciaSemanal($dados_diarios)
-        ];
-    }
     
-    /**
-     * Gerar insights inteligentes baseados no progresso
-     */
-    public function gerarInsightsInteligentes($usuario_id) {
-        $progresso = $this->obterResumoGeral($usuario_id);
-        $disciplinas = $this->obterProgressoPorDisciplina($usuario_id);
-        $temporais = $this->obterEstatisticasTemporais($usuario_id);
-        
-        $insights = [];
-        
-        // Insight sobre taxa de acerto
-        if ($progresso['taxa_acerto'] > 85) {
-            $insights[] = [
-                'tipo' => 'sucesso',
-                'titulo' => 'Excelente Performance!',
-                'mensagem' => "Sua taxa de acerto de " . round($progresso['taxa_acerto'], 1) . "% está acima da média. Continue assim!",
-                'icone' => '🎯',
-                'acao_sugerida' => 'Tente questões mais difíceis para se desafiar'
-            ];
-        } elseif ($progresso['taxa_acerto'] < 60) {
-            $insights[] = [
-                'tipo' => 'atencao',
-                'titulo' => 'Melhore sua Precisão',
-                'mensagem' => "Sua taxa de acerto está em " . round($progresso['taxa_acerto'], 1) . "%. Foque em qualidade, não quantidade.",
-                'icone' => '📚',
-                'acao_sugerida' => 'Revise os conteúdos antes de responder'
-            ];
-        }
-        
-        // Insight sobre disciplina mais forte
-        if (!empty($disciplinas)) {
-            $disciplina_forte = $disciplinas[0];
-            $insights[] = [
-                'tipo' => 'info',
-                'titulo' => 'Sua Disciplina Forte',
-                'mensagem' => "Você domina {$disciplina_forte['nome_disciplina']} com " . round($disciplina_forte['taxa_acerto'], 1) . "% de acerto.",
-                'icone' => '🏆',
-                'acao_sugerida' => 'Use essa força para ajudar em outras disciplinas'
-            ];
-        }
-        
-        // Insight sobre consistência
-        if ($progresso['streak_dias'] >= 7) {
-            $insights[] = [
-                'tipo' => 'sucesso',
-                'titulo' => 'Hábito Estabelecido!',
-                'mensagem' => "Você está há {$progresso['streak_dias']} dias estudando. O hábito está formado!",
-                'icone' => '🔥',
-                'acao_sugerida' => 'Mantenha a consistência e aumente gradualmente'
-            ];
-        }
-        
-        return $insights;
-    }
     
-    /**
-     * Sugerir próximos desafios personalizados
-     */
-    public function sugerirProximosDesafios($usuario_id) {
-        $progresso = $this->obterResumoGeral($usuario_id);
-        $disciplinas = $this->obterProgressoPorDisciplina($usuario_id);
-        
-        $desafios = [];
-        
-        // Desafio de simulado
-        if ($progresso['simulados_completos'] < 5) {
-            $desafios[] = [
-                'tipo' => 'simulado',
-                'titulo' => 'Complete seu primeiro simulado',
-                'descricao' => 'Teste seus conhecimentos com um simulado completo',
-                'dificuldade' => 'média',
-                'pontos_recompensa' => 100,
-                'tempo_estimado' => '60 minutos'
-            ];
-        }
-        
-        // Desafio de disciplina fraca
-        if (!empty($disciplinas)) {
-            $disciplina_fraca = end($disciplinas); // Última da lista (menor pontuação)
-            if ($disciplina_fraca['taxa_acerto'] < 70) {
-                $desafios[] = [
-                    'tipo' => 'disciplina',
-                    'titulo' => "Melhore em {$disciplina_fraca['nome_disciplina']}",
-                    'descricao' => "Foque em estudar mais {$disciplina_fraca['nome_disciplina']} para melhorar sua performance",
-                    'dificuldade' => 'alta',
-                    'pontos_recompensa' => 150,
-                    'tempo_estimado' => '2 semanas'
-                ];
-            }
-        }
-        
-        return $desafios;
-    }
     
     // Métodos auxiliares
     private function calcularPontosParaProximoNivel($nivel_atual) {
@@ -724,19 +573,20 @@ class SistemaProgressoAvancado {
             $insights = [];
             
             // Insight sobre taxa de acerto
-            if ($progresso['taxa_acerto'] > 85) {
+            $taxa_acerto = $progresso['taxa_acerto'] ?? 0;
+            if ($taxa_acerto > 85) {
                 $insights[] = [
                     'tipo' => 'sucesso',
                     'titulo' => 'Excelente Performance!',
-                    'mensagem' => "Sua taxa de acerto de " . round($progresso['taxa_acerto'], 1) . "% está acima da média. Continue assim!",
+                    'mensagem' => "Sua taxa de acerto de " . round($taxa_acerto, 1) . "% está acima da média. Continue assim!",
                     'icone' => '🎯',
                     'acao_sugerida' => 'Tente questões mais difíceis para se desafiar'
                 ];
-            } elseif ($progresso['taxa_acerto'] < 60) {
+            } elseif ($taxa_acerto < 60) {
                 $insights[] = [
                     'tipo' => 'atencao',
                     'titulo' => 'Melhore sua Precisão',
-                    'mensagem' => "Sua taxa de acerto está em " . round($progresso['taxa_acerto'], 1) . "%. Foque em qualidade, não quantidade.",
+                    'mensagem' => "Sua taxa de acerto está em " . round($taxa_acerto, 1) . "%. Foque em qualidade, não quantidade.",
                     'icone' => '📚',
                     'acao_sugerida' => 'Revise os conteúdos antes de responder'
                 ];
@@ -745,21 +595,23 @@ class SistemaProgressoAvancado {
             // Insight sobre disciplina mais forte
             if (!empty($disciplinas)) {
                 $disciplina_forte = $disciplinas[0];
+                $taxa_disciplina = $disciplina_forte['taxa_acerto'] ?? 0;
                 $insights[] = [
                     'tipo' => 'info',
                     'titulo' => 'Sua Disciplina Forte',
-                    'mensagem' => "Você domina {$disciplina_forte['nome_disciplina']} com " . round($disciplina_forte['taxa_acerto'], 1) . "% de acerto.",
+                    'mensagem' => "Você domina {$disciplina_forte['nome_disciplina']} com " . round($taxa_disciplina, 1) . "% de acerto.",
                     'icone' => '🏆',
                     'acao_sugerida' => 'Use essa força para ajudar em outras disciplinas'
                 ];
             }
             
             // Insight sobre consistência
-            if ($progresso['streak_dias'] >= 7) {
+            $streak_dias = $progresso['streak_dias'] ?? 0;
+            if ($streak_dias >= 7) {
                 $insights[] = [
                     'tipo' => 'sucesso',
                     'titulo' => 'Hábito Estabelecido!',
-                    'mensagem' => "Você está há {$progresso['streak_dias']} dias estudando. O hábito está formado!",
+                    'mensagem' => "Você está há {$streak_dias} dias estudando. O hábito está formado!",
                     'icone' => '🔥',
                     'acao_sugerida' => 'Mantenha a consistência e aumente gradualmente'
                 ];
@@ -783,7 +635,8 @@ class SistemaProgressoAvancado {
             $desafios = [];
             
             // Desafio de simulado
-            if ($progresso['simulados_completos'] < 5) {
+            $simulados_completos = $progresso['simulados_completos'] ?? 0;
+            if ($simulados_completos < 5) {
                 $desafios[] = [
                     'tipo' => 'simulado',
                     'titulo' => 'Complete seu primeiro simulado',

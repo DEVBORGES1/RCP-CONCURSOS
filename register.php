@@ -38,13 +38,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($stmt->execute([$nome, $email, $senha_hash])) {
                 $usuario_id = $pdo->lastInsertId();
                 
-                // Inicializar progresso do usuário
-                $sql = "INSERT INTO usuarios_progresso (usuario_id) VALUES (?)";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute([$usuario_id]);
-                
-                // Adicionar conquista de primeiro acesso
+                // Inicializar progresso do usuário usando a classe Gamificacao
                 $gamificacao = new Gamificacao($pdo);
+                $gamificacao->garantirProgressoUsuario($usuario_id);
+                
+                // Adicionar pontos de boas-vindas
                 $gamificacao->adicionarPontos($usuario_id, 50, 'primeiro_acesso');
                 
                 $mensagem = "Cadastro realizado com sucesso! Você ganhou 50 pontos de boas-vindas!";
@@ -148,11 +146,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .register-container {
             max-width: 450px;
             margin: 30px auto;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
         }
         
         .register-header {
@@ -161,18 +160,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         
         .register-header h1 {
-            color: #2c3e50;
+            color: white;
             font-size: 2rem;
             margin-bottom: 10px;
         }
         
         .register-header h1 i {
-            color: #667eea;
+            color: #ff4444;
             margin-right: 10px;
         }
         
         .register-header p {
-            color: #666;
+            color: rgba(255, 255, 255, 0.8);
             font-size: 1rem;
         }
         
@@ -187,12 +186,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         
         .alert-success {
-            background: linear-gradient(45deg, #43e97b, #38f9d7);
+            background: linear-gradient(45deg, #ff4444, #cc0000);
             color: white;
         }
         
         .alert-danger {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            background: linear-gradient(45deg, #ff4444, #cc0000);
             color: white;
         }
         
@@ -208,7 +207,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #2c3e50;
+            color: white;
         }
         
         .input-group {
@@ -220,23 +219,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .input-group i {
             position: absolute;
             left: 15px;
-            color: #667eea;
+            color: #ff4444;
             z-index: 1;
         }
         
         .input-group input {
             width: 100%;
             padding: 15px 15px 15px 45px;
-            border: 2px solid #e9ecef;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 10px;
             font-size: 1rem;
             transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
         }
         
         .input-group input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #ff4444;
+            box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.2);
+            background: rgba(255, 255, 255, 0.15);
         }
         
         .btn-large {
@@ -250,31 +256,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         
         .register-footer p {
-            color: #666;
+            color: rgba(255, 255, 255, 0.8);
             margin-bottom: 15px;
         }
         
         .register-footer a {
-            color: #667eea;
+            color: #ff4444;
             text-decoration: none;
             font-weight: 600;
             transition: color 0.3s ease;
         }
         
         .register-footer a:hover {
-            color: #764ba2;
+            color: #cc0000;
         }
         
         .back-link {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            color: #666 !important;
+            color: rgba(255, 255, 255, 0.6) !important;
             font-size: 0.9rem;
         }
         
         .back-link:hover {
-            color: #333 !important;
+            color: white !important;
         }
         
         @media (max-width: 480px) {

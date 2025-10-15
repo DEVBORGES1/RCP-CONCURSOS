@@ -65,11 +65,13 @@ body {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    background: #f5f5f5;
+    background: linear-gradient(135deg, #000000 0%, #1a0000 25%, #330000 50%, #660000 75%, #cc0000 100%);
+    background-attachment: fixed;
+    color: white;
 }
 
 h2, h3 {
-    color: #333;
+    color: white;
 }
 
 p {
@@ -80,6 +82,6 @@ p {
 
 hr {
     margin: 20px 0;
-    border: 1px solid #ddd;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 </style>

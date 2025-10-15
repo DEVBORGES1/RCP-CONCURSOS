@@ -173,12 +173,12 @@ $estatisticas = $stmt->fetch();
         }
         
         .edital-title h2 {
-            color: #2c3e50;
+            color: white;
             margin: 0 0 5px 0;
         }
         
         .edital-title p {
-            color: #666;
+            color: rgba(255, 255, 255, 0.8);
             margin: 0;
         }
         
@@ -191,25 +191,27 @@ $estatisticas = $stmt->fetch();
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #666;
+            color: rgba(255, 255, 255, 0.8);
             font-weight: 500;
         }
         
         .stat i {
-            color: #667eea;
+            color: #ff4444;
         }
         
         .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 15px;
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            color: white;
         }
         
         .text-content {
-            background: #f8f9fa;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             padding: 20px;
             max-height: 400px;
@@ -222,7 +224,7 @@ $estatisticas = $stmt->fetch();
             word-wrap: break-word;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: #2c3e50;
+            color: white;
         }
         
         .disciplinas-grid {
@@ -232,17 +234,20 @@ $estatisticas = $stmt->fetch();
         }
         
         .disciplina-card {
-            background: #f8f9fa;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 12px;
             padding: 20px;
             transition: all 0.3s ease;
-            border: 2px solid transparent;
+            color: white;
         }
         
         .disciplina-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border-color: #ff4444;
         }
         
         .disciplina-header {
@@ -253,7 +258,7 @@ $estatisticas = $stmt->fetch();
         }
         
         .disciplina-header h4 {
-            color: #2c3e50;
+            color: white;
             margin: 0;
             font-size: 1.1rem;
         }
