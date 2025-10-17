@@ -344,7 +344,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 8px;
             font-size: 1rem;
             transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+        }
+
+        .form-group select option {
+            background: #2c3e50;
+            color: white;
+            padding: 8px 12px;
+        }
+
+        .form-group select option:hover {
+            background: #34495e;
+        }
+
+        .form-group select option:checked {
+            background: #ff4444;
             color: white;
         }
 

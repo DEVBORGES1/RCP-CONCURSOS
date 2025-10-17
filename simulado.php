@@ -9,22 +9,121 @@ if (!isset($_SESSION["usuario_id"])) {
 }
 
 $simulado_id = $_GET['id'] ?? null;
+$predefined_type = $_GET['predefined'] ?? null;
 $view_mode = isset($_GET['view']);
 
-if (!$simulado_id) {
-    header("Location: simulados.php");
-    exit;
-}
-
-// Obter dados do simulado
-$sql = "SELECT * FROM simulados WHERE id = ? AND usuario_id = ?";
-$stmt = $pdo->prepare($sql);
-$stmt->execute([$simulado_id, $_SESSION["usuario_id"]]);
-$simulado = $stmt->fetch();
-
-if (!$simulado) {
-    header("Location: simulados.php");
-    exit;
+// Processar simulados pré-definidos
+if ($predefined_type) {
+    $predefined_configs = [
+        'geral' => [
+            'nome' => 'Simulado Geral Básico',
+            'quantidade' => 15,
+            'disciplinas' => null
+        ],
+        'portugues-matematica' => [
+            'nome' => 'Simulado Português e Matemática',
+            'quantidade' => 12,
+            'disciplinas' => ['Português', 'Matemática']
+        ],
+        'especificos' => [
+            'nome' => 'Simulado Conhecimentos Específicos',
+            'quantidade' => 10,
+            'disciplinas' => ['Direito', 'Administração', 'Atualidades']
+        ],
+        'logico-informatica' => [
+            'nome' => 'Simulado Raciocínio e Informática',
+            'quantidade' => 10,
+            'disciplinas' => ['Raciocínio Lógico', 'Informática']
+        ],
+        'completo' => [
+            'nome' => 'Simulado Completo',
+            'quantidade' => 30,
+            'disciplinas' => null
+        ]
+    ];
+    
+    if (!isset($predefined_configs[$predefined_type])) {
+        header("Location: simulados.php");
+        exit;
+    }
+    
+    $config = $predefined_configs[$predefined_type];
+    
+    // Verificar se já existe um simulado pré-definido para este usuário
+    $sql = "SELECT * FROM simulados WHERE usuario_id = ? AND nome = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$_SESSION["usuario_id"], $config['nome']]);
+    $simulado = $stmt->fetch();
+    
+    if (!$simulado) {
+        // Criar novo simulado pré-definido
+        $sql = "INSERT INTO simulados (usuario_id, nome, questoes_total) VALUES (?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$_SESSION["usuario_id"], $config['nome'], $config['quantidade']]);
+        $simulado_id = $pdo->lastInsertId();
+        
+        // Selecionar questões baseado no tipo
+        $where_clause = "";
+        $params = [];
+        
+        if ($config['disciplinas']) {
+            $placeholders = str_repeat('?,', count($config['disciplinas']) - 1) . '?';
+            $where_clause = "WHERE d.nome_disciplina IN ($placeholders)";
+            $params = $config['disciplinas'];
+        }
+        
+        $sql = "SELECT q.* FROM questoes q 
+                LEFT JOIN disciplinas d ON q.disciplina_id = d.id 
+                $where_clause
+                AND q.edital_id IN (SELECT id FROM editais WHERE usuario_id = ?)
+                ORDER BY RAND() LIMIT " . $config['quantidade'];
+        $params[] = $_SESSION["usuario_id"];
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $questoes_selecionadas = $stmt->fetchAll();
+        
+        // Se não há questões suficientes, pegar todas as disponíveis
+        if (count($questoes_selecionadas) < $config['quantidade']) {
+            $sql = "SELECT q.* FROM questoes q 
+                    WHERE q.edital_id IN (SELECT id FROM editais WHERE usuario_id = ?)
+                    ORDER BY RAND() LIMIT " . $config['quantidade'];
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$_SESSION["usuario_id"]]);
+            $questoes_selecionadas = $stmt->fetchAll();
+        }
+        
+        // Adicionar questões ao simulado
+        foreach ($questoes_selecionadas as $questao) {
+            $sql = "INSERT INTO simulados_questoes (simulado_id, questao_id) VALUES (?, ?)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$simulado_id, $questao['id']]);
+        }
+        
+        // Recarregar dados do simulado
+        $sql = "SELECT * FROM simulados WHERE id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$simulado_id]);
+        $simulado = $stmt->fetch();
+    } else {
+        $simulado_id = $simulado['id'];
+    }
+} else {
+    if (!$simulado_id) {
+        header("Location: simulados.php");
+        exit;
+    }
+    
+    // Obter dados do simulado normal
+    $sql = "SELECT * FROM simulados WHERE id = ? AND usuario_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$simulado_id, $_SESSION["usuario_id"]]);
+    $simulado = $stmt->fetch();
+    
+    if (!$simulado) {
+        header("Location: simulados.php");
+        exit;
+    }
 }
 
 // Obter questões do simulado
@@ -325,17 +424,18 @@ $gamificacao = new Gamificacao($pdo);
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 2px solid #e9ecef;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
         }
         
         .questao-header h3 {
-            color: #2c3e50;
+            color: white;
             margin: 0;
             font-size: 1.3rem;
+            font-weight: 600;
         }
         
         .disciplina-tag {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #ff4444, #cc0000);
             color: white;
             padding: 5px 15px;
             border-radius: 20px;
@@ -346,8 +446,12 @@ $gamificacao = new Gamificacao($pdo);
         .enunciado {
             font-size: 1.1rem;
             line-height: 1.6;
-            color: #2c3e50;
+            color: white;
             margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #ff4444;
         }
         
         .alternativas {
@@ -361,31 +465,32 @@ $gamificacao = new Gamificacao($pdo);
             align-items: center;
             gap: 15px;
             padding: 15px 20px;
-            border: 2px solid #e9ecef;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
-            background: white;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
         }
         
         .alternativa:hover {
-            border-color: #667eea;
-            background: #f8f9ff;
+            border-color: #ff4444;
+            background: rgba(255, 255, 255, 0.15);
         }
         
         .alternativa.selected {
-            border-color: #667eea;
-            background: #f8f9ff;
+            border-color: #ff4444;
+            background: rgba(255, 255, 255, 0.2);
         }
         
         .alternativa.correct {
             border-color: #28a745;
-            background: #d4edda;
+            background: rgba(40, 167, 69, 0.2);
         }
         
         .alternativa.incorrect {
             border-color: #dc3545;
-            background: #f8d7da;
+            background: rgba(220, 53, 69, 0.2);
         }
         
         .alternativa input[type="radio"] {
@@ -395,13 +500,13 @@ $gamificacao = new Gamificacao($pdo);
         
         .alternativa-letter {
             font-weight: 700;
-            color: #667eea;
+            color: #ff4444;
             min-width: 25px;
         }
         
         .alternativa-text {
             flex: 1;
-            color: #2c3e50;
+            color: white;
         }
         
         .correct-icon {
@@ -422,6 +527,20 @@ $gamificacao = new Gamificacao($pdo);
         .btn-large {
             padding: 20px 40px;
             font-size: 1.2rem;
+            background: linear-gradient(45deg, #ff4444, #cc0000);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+        }
+        
+        .btn-large:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 68, 68, 0.4);
+            background: linear-gradient(45deg, #cc0000, #990000);
         }
         
         @media (max-width: 768px) {

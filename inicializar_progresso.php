@@ -1,92 +1,102 @@
 <?php
 require 'conexao.php';
-require 'classes/Gamificacao.php';
 
-echo "<h2>=== INICIALIZAÇÃO DO PROGRESSO DOS USUÁRIOS ===</h2>";
+echo "=== INICIALIZAÇÃO DO SISTEMA DE PROGRESSO ===\n";
 
 try {
-    // Verificar se as tabelas existem
+    // Verificar se a tabela usuarios_progresso existe
     $stmt = $pdo->query("SHOW TABLES LIKE 'usuarios_progresso'");
-    if ($stmt->rowCount() == 0) {
-        echo "<p style='color: red;'>❌ Tabela 'usuarios_progresso' não existe! Execute primeiro o script banco.sql</p>";
-        exit;
+    if($stmt->rowCount() == 0) {
+        echo "Criando tabela usuarios_progresso...\n";
+        
+        $sql = "CREATE TABLE usuarios_progresso (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            usuario_id INT,
+            nivel INT DEFAULT 1,
+            pontos_total INT DEFAULT 0,
+            streak_dias INT DEFAULT 0,
+            ultimo_login DATE,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+        )";
+        $pdo->exec($sql);
+        echo "Tabela usuarios_progresso criada!\n";
     }
     
-    // Obter todos os usuários que não têm progresso
-    $sql = "SELECT u.id, u.nome, u.email 
-            FROM usuarios u 
-            LEFT JOIN usuarios_progresso p ON u.id = p.usuario_id 
-            WHERE p.usuario_id IS NULL";
+    // Verificar se a tabela ranking_mensal existe
+    $stmt = $pdo->query("SHOW TABLES LIKE 'ranking_mensal'");
+    if($stmt->rowCount() == 0) {
+        echo "Criando tabela ranking_mensal...\n";
+        
+        $sql = "CREATE TABLE ranking_mensal (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            usuario_id INT,
+            mes_ano VARCHAR(7),
+            pontos_mes INT DEFAULT 0,
+            posicao INT DEFAULT 0,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+        )";
+        $pdo->exec($sql);
+        echo "Tabela ranking_mensal criada!\n";
+    }
+    
+    // Obter todos os usuários
+    $sql = "SELECT id FROM usuarios";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
-    $usuarios_sem_progresso = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $usuarios = $stmt->fetchAll();
     
-    echo "<p><strong>Usuários sem progresso:</strong> " . count($usuarios_sem_progresso) . "</p>";
+    echo "Inicializando progresso para " . count($usuarios) . " usuários...\n";
     
-    if (count($usuarios_sem_progresso) > 0) {
-        echo "<h3>Inicializando progresso para os usuários:</h3>";
+    foreach ($usuarios as $usuario) {
+        $usuario_id = $usuario['id'];
         
-        foreach ($usuarios_sem_progresso as $usuario) {
-            // Inserir registro inicial de progresso
-            $sql = "INSERT INTO usuarios_progresso (usuario_id, nivel, pontos_total, streak_dias, ultimo_login) 
-                    VALUES (?, 1, 0, 0, ?)";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$usuario['id'], date('Y-m-d')]);
-            
-            echo "<p>✓ Progresso inicializado para: <strong>{$usuario['nome']}</strong> ({$usuario['email']})</p>";
-        }
-        
-        echo "<h3 style='color: green;'>✅ Progresso inicializado com sucesso!</h3>";
-    } else {
-        echo "<p style='color: blue;'>ℹ️ Todos os usuários já possuem progresso registrado.</p>";
-    }
-    
-    // Verificar conquistas existentes
-    $stmt = $pdo->query("SELECT COUNT(*) FROM conquistas");
-    $total_conquistas = $stmt->fetchColumn();
-    
-    if ($total_conquistas == 0) {
-        echo "<h3>Inserindo conquistas padrão...</h3>";
-        
-        $conquistas = [
-            ['Primeira Questão', 'Responda sua primeira questão', '🎯', 10, 'questoes'],
-            ['Iniciante', 'Responda 10 questões', '🌟', 100, 'questoes'],
-            ['Estudioso', 'Responda 50 questões', '📚', 500, 'questoes'],
-            ['Expert', 'Responda 100 questões', '🏆', 1000, 'questoes'],
-            ['Mestre', 'Responda 500 questões', '👑', 5000, 'questoes'],
-            ['Streak 3', 'Estude 3 dias seguidos', '🔥', 50, 'streak'],
-            ['Streak 7', 'Estude 7 dias seguidos', '🔥🔥', 200, 'streak'],
-            ['Streak 30', 'Estude 30 dias seguidos', '🔥🔥🔥', 1000, 'streak'],
-            ['Nível 5', 'Alcance o nível 5', '⭐', 250, 'nivel'],
-            ['Nível 10', 'Alcance o nível 10', '⭐⭐', 750, 'nivel'],
-            ['Simulador', 'Complete seu primeiro simulado', '📝', 100, 'simulado'],
-            ['Perfeccionista', 'Acerte 100% em um simulado', '💯', 500, 'simulado']
-        ];
-        
-        $sql = "INSERT INTO conquistas (nome, descricao, icone, pontos_necessarios, tipo) VALUES (?, ?, ?, ?, ?)";
+        // Verificar se já tem progresso
+        $sql = "SELECT COUNT(*) FROM usuarios_progresso WHERE usuario_id = ?";
         $stmt = $pdo->prepare($sql);
+        $stmt->execute([$usuario_id]);
         
-        foreach ($conquistas as $conquista) {
-            $stmt->execute($conquista);
+        if ($stmt->fetchColumn() == 0) {
+            // Calcular pontos baseado nas respostas
+            $sql = "SELECT COUNT(DISTINCT questao_id) as questoes_unicas,
+                           SUM(pontos_ganhos) as pontos_respostas
+                    FROM respostas_usuario WHERE usuario_id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$usuario_id]);
+            $dados_respostas = $stmt->fetch();
+            
+            $pontos_iniciais = $dados_respostas['pontos_respostas'] ?? 0;
+            $nivel_inicial = floor(sqrt($pontos_iniciais / 100)) + 1;
+            
+            // Inserir progresso
+            $sql = "INSERT INTO usuarios_progresso (usuario_id, nivel, pontos_total, streak_dias, ultimo_login) 
+                    VALUES (?, ?, ?, 0, ?)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$usuario_id, $nivel_inicial, $pontos_iniciais, date('Y-m-d')]);
+            
+            echo "Usuário $usuario_id: $pontos_iniciais pontos, nível $nivel_inicial\n";
+        } else {
+            echo "Usuário $usuario_id: já tem progresso\n";
         }
-        
-        echo "<p>✓ Conquistas padrão inseridas com sucesso!</p>";
     }
     
-    // Verificar se há dados de progresso para testar
-    $stmt = $pdo->query("SELECT COUNT(*) FROM usuarios_progresso");
-    $total_progresso = $stmt->fetchColumn();
+    echo "\n=== VERIFICAÇÃO FINAL ===\n";
     
-    echo "<h3>Resumo Final:</h3>";
-    echo "<p><strong>Total de usuários com progresso:</strong> $total_progresso</p>";
-    echo "<p><strong>Total de conquistas:</strong> " . $total_conquistas . "</p>";
+    // Verificar estatísticas
+    $sql = "SELECT COUNT(*) as usuarios_com_progresso,
+                   SUM(pontos_total) as pontos_totais,
+                   AVG(nivel) as nivel_medio
+            FROM usuarios_progresso";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $stats = $stmt->fetch();
     
-    if ($total_progresso > 0) {
-        echo "<p style='color: green;'>✅ Sistema de progresso está funcionando corretamente!</p>";
-        echo "<p><a href='dashboard.php'>→ Ir para o Dashboard</a></p>";
-    }
+    echo "Usuários com progresso: {$stats['usuarios_com_progresso']}\n";
+    echo "Pontos totais: {$stats['pontos_totais']}\n";
+    echo "Nível médio: " . round($stats['nivel_medio'], 1) . "\n";
     
-} catch (Exception $e) {
-    echo "<p style='color: red;'>❌ Erro: " . $e->getMessage() . "</p>";
+    echo "\nSistema de progresso inicializado com sucesso!\n";
+    
+} catch(Exception $e) {
+    echo "Erro: " . $e->getMessage() . "\n";
 }
 ?>

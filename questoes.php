@@ -446,7 +446,9 @@ $questoes_respondidas = $stmt->fetchColumn();
         }
         
         .modal-content {
-            background: white;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             margin: 5% auto;
             padding: 0;
             border-radius: 15px;
@@ -454,6 +456,7 @@ $questoes_respondidas = $stmt->fetchColumn();
             max-width: 800px;
             max-height: 80vh;
             overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
         }
         
         .modal-header {
@@ -461,26 +464,31 @@ $questoes_respondidas = $stmt->fetchColumn();
             justify-content: space-between;
             align-items: center;
             padding: 20px 30px;
-            border-bottom: 2px solid #e9ecef;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
         }
         
         .modal-header h2 {
             margin: 0;
-            color: #2c3e50;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
         }
         
         .close {
             font-size: 2rem;
             cursor: pointer;
-            color: #666;
+            color: rgba(255, 255, 255, 0.8);
+            transition: color 0.3s ease;
         }
         
         .close:hover {
-            color: #000;
+            color: #ff4444;
         }
         
         .modal-body {
             padding: 30px;
+            background: rgba(0, 0, 0, 0.3);
         }
         
         @media (max-width: 768px) {

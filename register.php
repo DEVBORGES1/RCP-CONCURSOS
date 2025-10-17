@@ -230,25 +230,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 10px;
             font-size: 1rem;
             transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
+            background: rgba(0, 0, 0, 0.6) !important;
+            color: white !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
         }
 
         .input-group input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.7);
         }
         
         .input-group input:focus {
             outline: none;
             border-color: #ff4444;
             box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.2);
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.8) !important;
         }
         
         .btn-large {
             width: 100%;
             padding: 18px;
             font-size: 1.1rem;
+            background: linear-gradient(45deg, #ff4444, #cc0000) !important;
+            color: white !important;
+            border: none !important;
+        }
+        
+        .btn-large:hover {
+            background: linear-gradient(45deg, #cc0000, #990000) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 68, 68, 0.3);
         }
         
         .register-footer {
@@ -292,6 +302,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             .register-header h1 {
                 font-size: 1.5rem;
             }
+        }
+        
+        /* Força aplicação dos estilos dos inputs */
+        .register-form input[type="text"],
+        .register-form input[type="email"],
+        .register-form input[type="password"] {
+            background: rgba(0, 0, 0, 0.6) !important;
+            color: white !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+        }
+        
+        .register-form input[type="text"]:focus,
+        .register-form input[type="email"]:focus,
+        .register-form input[type="password"]:focus {
+            background: rgba(0, 0, 0, 0.8) !important;
         }
     </style>
 

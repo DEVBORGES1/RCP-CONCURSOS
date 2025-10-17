@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 require 'conexao.php';
@@ -34,26 +33,29 @@ $stmt = $pdo->prepare("SELECT COUNT(*) FROM editais WHERE usuario_id = ?");
 $stmt->execute([$_SESSION["usuario_id"]]);
 $total_editais = $stmt->fetchColumn();
 
-// Obter simulados do usuário
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM simulados WHERE usuario_id = ?");
+// Obter simulados concluídos do usuário
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM simulados WHERE usuario_id = ? AND questoes_corretas IS NOT NULL");
 $stmt->execute([$_SESSION["usuario_id"]]);
 $total_simulados = $stmt->fetchColumn();
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Sistema de Concursos</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/css/concurso.ico" type="image/png">
 </head>
+
 <body>
     <div class="container">
         <!-- Header -->
         <header class="header">
             <div class="header-content">
-                <h1><i class="fas fa-graduation-cap"></i> Sistema de Concursos</h1>
+                <h1><i class="fas fa-graduation-cap"></i> RCP - Sistema de Concursos</h1>
                 <div class="user-info">
                     <div class="user-level">
                         <span class="level-badge">Nível <?= $nivel_usuario ?></span>
@@ -159,20 +161,30 @@ $total_simulados = $stmt->fetchColumn();
         <section class="achievements-section">
             <div class="achievements-card">
                 <h3><i class="fas fa-medal"></i> Conquistas</h3>
-                <div class="achievements-grid">
-                    <?php foreach ($conquistas as $conquista): ?>
-                        <div class="achievement-item <?= $conquista['data_conquista'] ? 'unlocked' : 'locked' ?>">
-                            <div class="achievement-icon"><?= $conquista['icone'] ?></div>
-                            <div class="achievement-info">
-                                <h4><?= $conquista['nome'] ?></h4>
-                                <p><?= $conquista['descricao'] ?></p>
-                                <?php if ($conquista['data_conquista']): ?>
-                                    <small>Conquistada em <?= date('d/m/Y', strtotime($conquista['data_conquista'])) ?></small>
-                                <?php endif; ?>
+                <?php if (empty($conquistas)): ?>
+                    <div class="empty-state">
+                        <i class="fas fa-medal"></i>
+                        <h3>Nenhuma conquista disponível</h3>
+                        <p>As conquistas serão exibidas aqui conforme você progride no sistema.</p>
+                    </div>
+                <?php else: ?>
+                    <div class="achievements-grid">
+                        <?php foreach ($conquistas as $conquista): ?>
+                            <div class="achievement-item <?= $conquista['data_conquista'] ? 'unlocked' : 'locked' ?>">
+                                <div class="achievement-icon"><?= htmlspecialchars($conquista['icone']) ?></div>
+                                <div class="achievement-info">
+                                    <h4><?= htmlspecialchars($conquista['nome']) ?></h4>
+                                    <p><?= htmlspecialchars($conquista['descricao']) ?></p>
+                                    <?php if ($conquista['data_conquista']): ?>
+                                        <small>Conquistada em <?= date('d/m/Y', strtotime($conquista['data_conquista'])) ?></small>
+                                    <?php else: ?>
+                                        <small><?= $conquista['pontos_necessarios'] ?> pontos necessários</small>
+                                    <?php endif; ?>
+                                </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </section>
 
@@ -220,4 +232,5 @@ $total_simulados = $stmt->fetchColumn();
         });
     </script>
 </body>
+
 </html>

@@ -242,23 +242,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['responder'])) {
     
     .alternativa-letter {
         font-weight: 700;
-        color: #667eea;
+        color: #ff4444;
         min-width: 25px;
     }
     
     .alternativa-text {
         flex: 1;
-        color: #2c3e50;
+        color: white;
     }
     
     .form-actions {
         text-align: center;
         padding-top: 20px;
-        border-top: 2px solid #e9ecef;
+        border-top: 2px solid rgba(255, 255, 255, 0.2);
     }
     
     .btn-primary {
-        background: linear-gradient(45deg, #667eea, #764ba2);
+        background: linear-gradient(45deg, #ff4444, #cc0000);
         color: white;
         padding: 15px 30px;
         border: none;
@@ -270,18 +270,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['responder'])) {
         font-weight: 600;
         transition: all 0.3s ease;
         cursor: pointer;
+        box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
     }
     
     .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 8px 25px rgba(255, 68, 68, 0.4);
+        background: linear-gradient(45deg, #cc0000, #990000);
     }
     
     .btn-secondary {
-        background: #6c757d;
+        background: rgba(255, 255, 255, 0.1);
         color: white;
         padding: 15px 30px;
-        border: none;
+        border: 2px solid rgba(255, 255, 255, 0.3);
         border-radius: 10px;
         text-decoration: none;
         display: inline-flex;
@@ -290,11 +292,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['responder'])) {
         font-weight: 500;
         transition: all 0.3s ease;
         cursor: pointer;
+        backdrop-filter: blur(10px);
     }
     
     .btn-secondary:hover {
-        background: #5a6268;
+        background: rgba(255, 255, 255, 0.2);
+        border-color: #ff4444;
         transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(255, 68, 68, 0.2);
     }
     
     @media (max-width: 768px) {

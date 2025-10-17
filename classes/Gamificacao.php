@@ -21,6 +21,11 @@ class Gamificacao {
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$pontos, $usuario_id]);
             
+            // Verificar se a atualização foi bem-sucedida
+            if ($stmt->rowCount() == 0) {
+                throw new Exception("Falha ao atualizar pontos do usuário");
+            }
+            
             // Calcular novo nível
             $novo_nivel = $this->calcularNivel($usuario_id);
             $this->atualizarNivel($usuario_id, $novo_nivel);
@@ -36,6 +41,7 @@ class Gamificacao {
             
         } catch (Exception $e) {
             $this->pdo->rollBack();
+            error_log("Erro ao adicionar pontos: " . $e->getMessage());
             return false;
         }
     }
@@ -224,8 +230,8 @@ class Gamificacao {
         $this->garantirProgressoUsuario($usuario_id);
         
         $sql = "SELECT u.nome, u.email, p.nivel, p.pontos_total, p.streak_dias,
-                       (SELECT COUNT(*) FROM respostas_usuario WHERE usuario_id = ?) as questoes_respondidas,
-                       (SELECT COUNT(*) FROM respostas_usuario WHERE usuario_id = ? AND correta = 1) as questoes_corretas
+                       (SELECT COUNT(DISTINCT questao_id) FROM respostas_usuario WHERE usuario_id = ?) as questoes_respondidas,
+                       (SELECT COUNT(DISTINCT questao_id) FROM respostas_usuario WHERE usuario_id = ? AND correta = 1) as questoes_corretas
                 FROM usuarios u 
                 LEFT JOIN usuarios_progresso p ON u.id = p.usuario_id 
                 WHERE u.id = ?";

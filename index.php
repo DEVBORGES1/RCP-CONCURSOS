@@ -7,21 +7,24 @@ if (isset($_SESSION["usuario_id"])) {
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Concursos - Plataforma de Estudos</title>
+    <title>RCP - Sistema de Concursos - Plataforma de Estudos</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="/css/concurso.png" type="image/png">
 </head>
+
 <body class="homepage">
     <div class="container">
         <!-- Navigation -->
         <nav class="main-nav">
             <div class="nav-brand">
                 <i class="fas fa-graduation-cap"></i>
-                <span>Sistema de Concursos</span>
+                <span>RCP - Sistema de Concursos</span>
             </div>
             <div class="nav-actions">
                 <a href="login.php" class="nav-link">Entrar</a>
@@ -38,7 +41,7 @@ if (isset($_SESSION["usuario_id"])) {
                 </div>
                 <h1>Transforme seus estudos em uma <span class="gradient-text">jornada épica</span></h1>
                 <p class="hero-subtitle">
-                    A única plataforma que combina inteligência artificial, gamificação e 
+                    A única plataforma que combina inteligência artificial, gamificação e
                     análise de dados para maximizar seu desempenho em concursos públicos.
                 </p>
                 <div class="hero-stats">
@@ -55,7 +58,7 @@ if (isset($_SESSION["usuario_id"])) {
                         <span class="label">Usuários</span>
                     </div>
                 </div>
-                
+
                 <div class="hero-actions">
                     <a href="register.php" class="btn-primary btn-large">
                         <i class="fas fa-rocket"></i> Começar Jornada
@@ -65,7 +68,7 @@ if (isset($_SESSION["usuario_id"])) {
                         <i class="fas fa-sign-in-alt"></i> Já tenho conta
                     </a>
                 </div>
-                
+
                 <div class="hero-trust">
                     <p>Confiança de milhares de candidatos</p>
                     <div class="trust-badges">
@@ -84,7 +87,7 @@ if (isset($_SESSION["usuario_id"])) {
                     </div>
                 </div>
             </div>
-            
+
             <div class="hero-visual">
                 <div class="floating-cards">
                     <div class="card card-1">
@@ -151,7 +154,7 @@ if (isset($_SESSION["usuario_id"])) {
                 <h2>Por que escolher nossa plataforma?</h2>
                 <p>Recursos que fazem a diferença na sua preparação</p>
             </div>
-            
+
             <div class="features-grid">
                 <div class="feature-item">
                     <div class="feature-icon">
@@ -160,7 +163,7 @@ if (isset($_SESSION["usuario_id"])) {
                     <h3>Upload de Editais</h3>
                     <p>Envie PDFs de editais e provas anteriores. Nossa IA extrai automaticamente o conteúdo programático e identifica as disciplinas.</p>
                 </div>
-                
+
                 <div class="feature-item">
                     <div class="feature-icon">
                         <i class="fas fa-calendar-alt"></i>
@@ -168,7 +171,7 @@ if (isset($_SESSION["usuario_id"])) {
                     <h3>Cronograma Inteligente</h3>
                     <p>Gere planos de estudo personalizados baseados no tempo disponível, peso das disciplinas e dificuldade dos tópicos.</p>
                 </div>
-                
+
                 <div class="feature-item">
                     <div class="feature-icon">
                         <i class="fas fa-question-circle"></i>
@@ -176,7 +179,7 @@ if (isset($_SESSION["usuario_id"])) {
                     <h3>Banco de Questões</h3>
                     <p>Cadastre questões das provas anteriores e pratique com nosso sistema inteligente de questões personalizadas.</p>
                 </div>
-                
+
                 <div class="feature-item">
                     <div class="feature-icon">
                         <i class="fas fa-clipboard-list"></i>
@@ -184,7 +187,7 @@ if (isset($_SESSION["usuario_id"])) {
                     <h3>Simulados Personalizados</h3>
                     <p>Crie simulados adaptados ao seu nível e disciplinas de interesse, com correção automática e feedback detalhado.</p>
                 </div>
-                
+
                 <div class="feature-item">
                     <div class="feature-icon">
                         <i class="fas fa-gamepad"></i>
@@ -192,7 +195,7 @@ if (isset($_SESSION["usuario_id"])) {
                     <h3>Sistema Gamificado</h3>
                     <p>Ganhe pontos, suba de nível, desbloqueie conquistas e compete com outros estudantes em rankings mensais.</p>
                 </div>
-                
+
                 <div class="feature-item">
                     <div class="feature-icon">
                         <i class="fas fa-chart-bar"></i>
@@ -231,7 +234,7 @@ if (isset($_SESSION["usuario_id"])) {
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="testimonial">
                     <div class="testimonial-content">
                         <div class="stars">
@@ -253,7 +256,7 @@ if (isset($_SESSION["usuario_id"])) {
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="testimonial">
                     <div class="testimonial-content">
                         <div class="stars">
@@ -396,7 +399,7 @@ if (isset($_SESSION["usuario_id"])) {
             margin-bottom: 120px;
             padding: 80px 0;
         }
-        
+
         .hero-badge {
             display: inline-flex;
             align-items: center;
@@ -425,7 +428,7 @@ if (isset($_SESSION["usuario_id"])) {
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
+
         .hero-subtitle {
             font-size: 1.3rem;
             color: rgba(255, 255, 255, 0.9);
@@ -457,13 +460,13 @@ if (isset($_SESSION["usuario_id"])) {
             color: rgba(255, 255, 255, 0.7);
             font-weight: 500;
         }
-        
+
         .hero-actions {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
         }
-        
+
         .btn-large {
             padding: 18px 35px;
             font-size: 1.1rem;
@@ -475,14 +478,14 @@ if (isset($_SESSION["usuario_id"])) {
             font-weight: 600;
             transition: all 0.3s ease;
         }
-        
+
         .btn-primary {
             background: linear-gradient(45deg, #ff4444, #cc0000);
             color: white;
             position: relative;
             overflow: hidden;
         }
-        
+
         .btn-primary:hover {
             transform: translateY(-3px);
             box-shadow: 0 15px 40px rgba(255, 68, 68, 0.4);
@@ -501,14 +504,14 @@ if (isset($_SESSION["usuario_id"])) {
         .btn-primary:hover .btn-glow {
             left: 100%;
         }
-        
+
         .btn-secondary {
             background: rgba(255, 255, 255, 0.1);
             color: white;
             border: 2px solid rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(10px);
         }
-        
+
         .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.2);
             border-color: rgba(255, 255, 255, 0.5);
@@ -548,7 +551,7 @@ if (isset($_SESSION["usuario_id"])) {
         .badge i {
             color: #ff4444;
         }
-        
+
         .hero-visual {
             position: relative;
             display: flex;
@@ -623,8 +626,15 @@ if (isset($_SESSION["usuario_id"])) {
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
         }
 
         /* Section Headers */
@@ -709,17 +719,17 @@ if (isset($_SESSION["usuario_id"])) {
             color: rgba(255, 255, 255, 0.8);
             line-height: 1.6;
         }
-        
+
         .features-section {
             margin-bottom: 120px;
         }
-        
+
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 30px;
         }
-        
+
         .feature-item {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
@@ -730,13 +740,13 @@ if (isset($_SESSION["usuario_id"])) {
             color: white;
             transition: all 0.3s ease;
         }
-        
+
         .feature-item:hover {
             transform: translateY(-10px);
             background: rgba(255, 255, 255, 0.15);
             border-color: rgba(255, 68, 68, 0.3);
         }
-        
+
         .feature-icon {
             width: 80px;
             height: 80px;
@@ -747,19 +757,19 @@ if (isset($_SESSION["usuario_id"])) {
             justify-content: center;
             margin: 0 auto 25px;
         }
-        
+
         .feature-icon i {
             font-size: 2rem;
             color: white;
         }
-        
+
         .feature-item h3 {
             color: white;
             font-size: 1.3rem;
             margin-bottom: 15px;
             font-weight: 600;
         }
-        
+
         .feature-item p {
             color: rgba(255, 255, 255, 0.8);
             line-height: 1.6;
@@ -835,7 +845,7 @@ if (isset($_SESSION["usuario_id"])) {
             color: rgba(255, 255, 255, 0.7);
             font-size: 0.9rem;
         }
-        
+
         .stats-section {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
@@ -844,13 +854,13 @@ if (isset($_SESSION["usuario_id"])) {
             padding: 60px;
             margin-bottom: 120px;
         }
-        
+
         .stats-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 40px;
         }
-        
+
         .stat-item {
             text-align: center;
             color: white;
@@ -871,7 +881,7 @@ if (isset($_SESSION["usuario_id"])) {
             font-size: 1.5rem;
             color: white;
         }
-        
+
         .stat-number {
             font-size: 3rem;
             font-weight: 800;
@@ -879,13 +889,13 @@ if (isset($_SESSION["usuario_id"])) {
             margin-bottom: 10px;
             display: block;
         }
-        
+
         .stat-label {
             color: rgba(255, 255, 255, 0.8);
             font-size: 1.1rem;
             font-weight: 500;
         }
-        
+
         .cta-section {
             text-align: center;
             background: linear-gradient(45deg, #ff4444, #cc0000);
@@ -907,14 +917,14 @@ if (isset($_SESSION["usuario_id"])) {
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
             opacity: 0.3;
         }
-        
+
         .cta-section h2 {
             font-size: 2.5rem;
             margin-bottom: 20px;
             position: relative;
             z-index: 2;
         }
-        
+
         .cta-section p {
             font-size: 1.2rem;
             margin-bottom: 40px;
@@ -922,20 +932,20 @@ if (isset($_SESSION["usuario_id"])) {
             position: relative;
             z-index: 2;
         }
-        
+
         .cta-section .btn-primary {
             background: white;
             color: #ff4444;
             position: relative;
             z-index: 2;
         }
-        
+
         .cta-section .btn-primary:hover {
             background: #f8f9fa;
             transform: translateY(-3px);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
         }
-        
+
         @media (max-width: 768px) {
             .hero-section {
                 grid-template-columns: 1fr;
@@ -943,11 +953,11 @@ if (isset($_SESSION["usuario_id"])) {
                 text-align: center;
                 padding: 40px 0;
             }
-            
+
             .hero-content h1 {
                 font-size: 2.5rem;
             }
-            
+
             .hero-subtitle {
                 font-size: 1.1rem;
             }
@@ -972,14 +982,17 @@ if (isset($_SESSION["usuario_id"])) {
                 animation: none;
             }
 
-            .card-1, .card-2, .card-3, .card-4 {
+            .card-1,
+            .card-2,
+            .card-3,
+            .card-4 {
                 position: relative;
                 top: auto;
                 left: auto;
                 right: auto;
                 bottom: auto;
             }
-            
+
             .features-grid {
                 grid-template-columns: 1fr;
             }
@@ -987,15 +1000,15 @@ if (isset($_SESSION["usuario_id"])) {
             .testimonials-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .stats-container {
                 grid-template-columns: repeat(2, 1fr);
             }
-            
+
             .cta-section {
                 padding: 40px 20px;
             }
-            
+
             .cta-section h2 {
                 font-size: 2rem;
             }
@@ -1004,7 +1017,7 @@ if (isset($_SESSION["usuario_id"])) {
                 font-size: 2rem;
             }
         }
-        
+
         @media (max-width: 480px) {
             .hero-content h1 {
                 font-size: 2rem;
@@ -1019,11 +1032,11 @@ if (isset($_SESSION["usuario_id"])) {
                 flex-direction: column;
                 align-items: center;
             }
-            
+
             .stats-container {
                 grid-template-columns: 1fr;
             }
-            
+
             .hero-actions {
                 flex-direction: column;
                 align-items: center;
@@ -1036,4 +1049,5 @@ if (isset($_SESSION["usuario_id"])) {
         }
     </style>
 </body>
+
 </html>

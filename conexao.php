@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";
 $db   = "concursos";
-$user = "root"; 
+$user = "root";
 $pass = "";
 
 try {
@@ -10,4 +10,3 @@ try {
 } catch (Exception $e) {
     die("Erro na conexão: " . $e->getMessage());
 }
-?>

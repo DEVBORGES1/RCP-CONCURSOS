@@ -8,24 +8,24 @@ $mensagem = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
     $senha = $_POST["senha"];
-    
+
     $sql = "SELECT * FROM usuarios WHERE email = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$email]);
     $user = $stmt->fetch();
-    
+
     if ($user && password_verify($senha, $user['senha_hash'])) {
         $_SESSION["usuario_id"] = $user["id"];
-        
+
         // Inicializar progresso do usuário usando a classe Gamificacao
         $gamificacao = new Gamificacao($pdo);
-        
+
         // Garantir que o usuário tenha progresso inicializado
         $gamificacao->garantirProgressoUsuario($user["id"]);
-        
+
         // Atualizar streak
         $gamificacao->atualizarStreak($user["id"]);
-        
+
         header("Location: dashboard.php");
         exit;
     } else {
@@ -35,6 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,6 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
     <div class="container">
         <div class="login-container">
@@ -49,14 +51,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <h1><i class="fas fa-graduation-cap"></i> Sistema de Concursos</h1>
                 <p>Faça login para continuar seus estudos</p>
             </div>
-            
+
             <?php if ($mensagem): ?>
                 <div class="alert alert-danger">
                     <i class="fas fa-exclamation-triangle"></i>
                     <?= $mensagem ?>
                 </div>
             <?php endif; ?>
-            
+
             <form method="POST" class="login-form">
                 <div class="form-group">
                     <label for="email">Email:</label>
@@ -65,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <input type="email" id="email" name="email" placeholder="Seu email" required>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="senha">Senha:</label>
                     <div class="input-group">
@@ -73,12 +75,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <input type="password" id="senha" name="senha" placeholder="Sua senha" required>
                     </div>
                 </div>
-                
+
                 <button type="submit" class="btn-primary btn-large">
                     <i class="fas fa-sign-in-alt"></i> Entrar
                 </button>
             </form>
-            
+
             <div class="login-footer">
                 <p>Não tem uma conta? <a href="register.php">Cadastre-se aqui</a></p>
                 <a href="index.php" class="back-link">
@@ -99,28 +101,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             padding: 40px;
             box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
         }
-        
+
+        .login-container form {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            backdrop-filter: blur(20px) !important;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4) !important;
+        }
+
         .login-header {
             text-align: center;
             margin-bottom: 30px;
         }
-        
+
         .login-header h1 {
             color: white;
             font-size: 2rem;
             margin-bottom: 10px;
         }
-        
+
         .login-header h1 i {
             color: #ff4444;
             margin-right: 10px;
         }
-        
+
         .login-header p {
             color: rgba(255, 255, 255, 0.8);
             font-size: 1rem;
         }
-        
+
         .alert {
             padding: 15px 20px;
             border-radius: 10px;
@@ -130,40 +139,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             gap: 10px;
             font-weight: 500;
         }
-        
+
         .alert-danger {
             background: linear-gradient(45deg, #ff4444, #cc0000);
             color: white;
         }
-        
+
         .login-form {
             margin-bottom: 30px;
         }
-        
+
         .form-group {
             margin-bottom: 20px;
         }
-        
+
         .form-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
             color: white;
         }
-        
+
         .input-group {
             position: relative;
             display: flex;
             align-items: center;
         }
-        
+
         .input-group i {
             position: absolute;
             left: 15px;
             color: #ff4444;
             z-index: 1;
         }
-        
+
         .input-group input {
             width: 100%;
             padding: 15px 15px 15px 45px;
@@ -171,47 +180,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 10px;
             font-size: 1rem;
             transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
+            background: rgba(0, 0, 0, 0.6) !important;
+            color: white !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
         }
 
         .input-group input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.7);
         }
-        
+
         .input-group input:focus {
             outline: none;
             border-color: #ff4444;
             box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.2);
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.8) !important;
         }
-        
+
         .btn-large {
             width: 100%;
             padding: 18px;
             font-size: 1.1rem;
+            background: linear-gradient(45deg, #ff4444, #cc0000) !important;
+            color: white !important;
+            border: none !important;
         }
-        
+
+        .btn-large:hover {
+            background: linear-gradient(45deg, #cc0000, #990000) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 68, 68, 0.3);
+        }
+
         .login-footer {
             text-align: center;
         }
-        
+
         .login-footer p {
             color: rgba(255, 255, 255, 0.8);
             margin-bottom: 15px;
         }
-        
+
         .login-footer a {
             color: #ff4444;
             text-decoration: none;
             font-weight: 600;
             transition: color 0.3s ease;
         }
-        
+
         .login-footer a:hover {
             color: #cc0000;
         }
-        
+
         .back-link {
             display: inline-flex;
             align-items: center;
@@ -219,21 +238,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: rgba(255, 255, 255, 0.6) !important;
             font-size: 0.9rem;
         }
-        
+
         .back-link:hover {
             color: white !important;
         }
-        
+
         @media (max-width: 480px) {
             .login-container {
                 margin: 20px;
                 padding: 30px 20px;
             }
-            
+
             .login-header h1 {
                 font-size: 1.5rem;
             }
         }
+
+        /* Força aplicação dos estilos dos inputs */
+        .login-form input[type="email"],
+        .login-form input[type="password"] {
+            background: rgba(0, 0, 0, 0.6) !important;
+            color: white !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+        }
+
+        .login-form input[type="email"]:focus,
+        .login-form input[type="password"]:focus {
+            background: rgba(0, 0, 0, 0.8) !important;
+        }
     </style>
 </body>
+
 </html>
