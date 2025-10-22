@@ -10,6 +10,7 @@ if (!isset($_SESSION["usuario_id"])) {
 
 $gamificacao = new Gamificacao($pdo);
 $gamificacao->atualizarStreak($_SESSION["usuario_id"]);
+$gamificacao->verificarTodasConquistas($_SESSION["usuario_id"]);
 
 // Obter dados do usuário
 $dados_usuario = $gamificacao->obterDadosUsuario($_SESSION["usuario_id"]);

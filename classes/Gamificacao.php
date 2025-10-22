@@ -291,5 +291,43 @@ class Gamificacao {
         
         return $stmt->fetchColumn();
     }
+    
+    // Verificar todas as conquistas baseadas no estado atual do usuário
+    public function verificarTodasConquistas($usuario_id) {
+        $this->garantirProgressoUsuario($usuario_id);
+        
+        // Obter todas as conquistas
+        $sql = "SELECT * FROM conquistas";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        $conquistas = $stmt->fetchAll();
+        
+        foreach ($conquistas as $conquista) {
+            if ($this->verificarConquistaEspecifica($usuario_id, $conquista)) {
+                $this->concederConquista($usuario_id, $conquista['id']);
+            }
+        }
+    }
+    
+    // Verificar conquistas baseadas em pontos totais
+    public function verificarConquistasPorPontos($usuario_id) {
+        $this->garantirProgressoUsuario($usuario_id);
+        
+        // Obter pontos atuais
+        $sql = "SELECT pontos_total FROM usuarios_progresso WHERE usuario_id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$usuario_id]);
+        $pontos_atuais = $stmt->fetchColumn();
+        
+        // Verificar conquistas baseadas em pontos
+        $sql = "SELECT * FROM conquistas WHERE tipo = 'pontos' AND pontos_necessarios <= ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$pontos_atuais]);
+        $conquistas_pontos = $stmt->fetchAll();
+        
+        foreach ($conquistas_pontos as $conquista) {
+            $this->concederConquista($usuario_id, $conquista['id']);
+        }
+    }
 }
 ?>
