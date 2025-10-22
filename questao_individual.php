@@ -40,7 +40,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['responder'])) {
     $resposta = strtoupper($_POST['resposta']);
     $resposta_correta = $questao['alternativa_correta'];
     
-    $acertou = ($resposta == $resposta_correta) ? 1 : 0;
+    // Normalizar respostas para comparação
+    $resposta_normalizada = strtoupper(trim($resposta));
+    $resposta_correta_normalizada = strtoupper(trim($resposta_correta));
+    
+    $acertou = ($resposta_normalizada == $resposta_correta_normalizada) ? 1 : 0;
     $pontos = $acertou ? 10 : 0;
     
     // Registrar resposta

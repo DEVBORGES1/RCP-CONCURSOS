@@ -1,7 +1,7 @@
 <?php
 require_once 'conexao.php';
 
-class Gamificacao {
+class GamificacaoCorrigida {
     private $pdo;
     
     public function __construct($pdo) {

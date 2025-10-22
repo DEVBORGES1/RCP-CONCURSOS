@@ -212,6 +212,10 @@ $total_simulados = $stmt->fetchColumn();
                     <i class="fas fa-clipboard-list"></i>
                     <span>Simulados</span>
                 </a>
+                <a href="videoaulas.php" class="action-btn">
+                    <i class="fas fa-play-circle"></i>
+                    <span>Videoaulas</span>
+                </a>
                 <a href="dashboard_avancado.php" class="action-btn">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard Avançado</span>

@@ -1,5 +1,6 @@
 <?php
 require_once 'conexao.php';
+require_once 'GeradorCronograma.php';
 
 class GeradorPDFCronograma {
     private $pdo;
@@ -67,18 +68,20 @@ class GeradorPDFCronograma {
         body {
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #000;
             margin: 0;
             padding: 0;
+            background: #fff;
         }
         
         .header {
             text-align: center;
             margin-bottom: 30px;
             padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #000 0%, #cc0000 100%);
             color: white;
             border-radius: 10px;
+            border: 3px solid #cc0000;
         }
         
         .header h1 {
@@ -100,6 +103,7 @@ class GeradorPDFCronograma {
             padding: 15px;
             background: #f8f9fa;
             border-radius: 8px;
+            border: 2px solid #cc0000;
         }
         
         .stat-item {
@@ -108,14 +112,16 @@ class GeradorPDFCronograma {
         
         .stat-item h3 {
             margin: 0;
-            color: #667eea;
+            color: #cc0000;
             font-size: 24px;
+            font-weight: bold;
         }
         
         .stat-item p {
             margin: 5px 0 0 0;
-            color: #666;
+            color: #000;
             font-size: 14px;
+            font-weight: 500;
         }
         
         .week-section {
@@ -124,26 +130,28 @@ class GeradorPDFCronograma {
         }
         
         .week-header {
-            background: #667eea;
+            background: #cc0000;
             color: white;
             padding: 10px 15px;
             border-radius: 5px 5px 0 0;
             font-weight: bold;
             font-size: 16px;
+            border: 2px solid #000;
         }
         
         .day-card {
-            border: 1px solid #ddd;
+            border: 2px solid #000;
             border-top: none;
             margin-bottom: 0;
         }
         
         .day-header {
-            background: #f8f9fa;
+            background: #000;
+            color: white;
             padding: 12px 15px;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 2px solid #cc0000;
             font-weight: bold;
-            color: #2c3e50;
+            color: white;
         }
         
         .day-content {
@@ -155,7 +163,7 @@ class GeradorPDFCronograma {
             justify-content: space-between;
             align-items: center;
             padding: 8px 0;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #cc0000;
         }
         
         .activity:last-child {
@@ -163,33 +171,71 @@ class GeradorPDFCronograma {
         }
         
         .activity-subject {
-            font-weight: 500;
-            color: #2c3e50;
+            font-weight: 600;
+            color: #000;
+            font-size: 14px;
         }
         
         .activity-time {
-            background: #667eea;
+            background: #cc0000;
             color: white;
-            padding: 4px 8px;
+            padding: 6px 12px;
             border-radius: 4px;
             font-size: 12px;
             font-weight: bold;
+            border: 1px solid #000;
         }
         
         .activity-description {
             font-size: 12px;
-            color: #666;
+            color: #000;
             margin-top: 4px;
+            font-weight: 500;
         }
         
         .footer {
             margin-top: 30px;
             text-align: center;
             padding: 20px;
-            background: #f8f9fa;
+            background: #000;
+            color: white;
             border-radius: 8px;
             font-size: 12px;
-            color: #666;
+            border: 2px solid #cc0000;
+        }
+        
+        .footer p {
+            color: white;
+            margin: 5px 0;
+        }
+        
+        /* Estilos adicionais para tema preto e vermelho */
+        .header h1 {
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .week-header {
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .day-header {
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .activity-time {
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .stats {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .day-card {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .footer {
+            box-shadow: 0 -4px 8px rgba(0,0,0,0.2);
         }
         
         @media print {
@@ -203,6 +249,12 @@ class GeradorPDFCronograma {
             
             .week-section {
                 page-break-inside: avoid;
+            }
+            
+            /* Garantir que as cores sejam mantidas na impressão */
+            .header, .week-header, .day-header, .activity-time, .footer {
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
             }
         }
     </style>

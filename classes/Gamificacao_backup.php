@@ -8,9 +8,11 @@ class Gamificacao {
         $this->pdo = $pdo;
     }
     
-    // Adicionar pontos ao usuário (versão corrigida)
+    // Adicionar pontos ao usuário
     public function adicionarPontos($usuario_id, $pontos, $tipo = 'questao') {
         try {
+            $this->pdo->beginTransaction();
+            
             // Garantir que o usuário tenha um registro de progresso
             $this->garantirProgressoUsuario($usuario_id);
             
@@ -34,9 +36,11 @@ class Gamificacao {
             // Atualizar ranking mensal
             $this->atualizarRankingMensal($usuario_id, $pontos);
             
+            $this->pdo->commit();
             return true;
             
         } catch (Exception $e) {
+            $this->pdo->rollBack();
             error_log("Erro ao adicionar pontos: " . $e->getMessage());
             return false;
         }
@@ -74,16 +78,24 @@ class Gamificacao {
         $stmt->execute([$nivel, $usuario_id]);
     }
     
-    // Verificar e conceder conquistas (versão simplificada)
+    // Verificar e conceder conquistas
     private function verificarConquistas($usuario_id, $tipo) {
         $sql = "SELECT * FROM conquistas WHERE tipo = ?";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$tipo]);
         $conquistas = $stmt->fetchAll();
         
+        // Debug: Log das conquistas encontradas
+        error_log("CONQUISTA DEBUG - Tipo: $tipo, Conquistas encontradas: " . count($conquistas));
+        
         foreach ($conquistas as $conquista) {
+            error_log("CONQUISTA DEBUG - Verificando: {$conquista['nome']} (ID: {$conquista['id']})");
+            
             if ($this->verificarConquistaEspecifica($usuario_id, $conquista)) {
+                error_log("CONQUISTA DEBUG - Conquista {$conquista['nome']} deve ser concedida!");
                 $this->concederConquista($usuario_id, $conquista['id']);
+            } else {
+                error_log("CONQUISTA DEBUG - Conquista {$conquista['nome']} ainda não pode ser concedida");
             }
         }
     }
@@ -109,6 +121,9 @@ class Gamificacao {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$usuario_id]);
         $respondidas = $stmt->fetchColumn();
+        
+        // Debug: Log para verificação
+        error_log("CONQUISTA DEBUG - Questões respondidas: $respondidas, Necessárias: $necessarias");
         
         return $respondidas >= $necessarias;
     }
@@ -143,7 +158,7 @@ class Gamificacao {
         return $simulados >= $necessarios;
     }
     
-    // Conceder conquista (versão simplificada)
+    // Conceder conquista
     private function concederConquista($usuario_id, $conquista_id) {
         // Verificar se já tem a conquista
         $sql = "SELECT COUNT(*) FROM usuarios_conquistas 
@@ -152,25 +167,34 @@ class Gamificacao {
         $stmt->execute([$usuario_id, $conquista_id]);
         
         if ($stmt->fetchColumn() == 0) {
+            error_log("CONQUISTA DEBUG - Concedendo conquista ID: $conquista_id para usuário: $usuario_id");
+            
             $sql = "INSERT INTO usuarios_conquistas (usuario_id, conquista_id) VALUES (?, ?)";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$usuario_id, $conquista_id]);
+            $resultado = $stmt->execute([$usuario_id, $conquista_id]);
             
-            // Adicionar pontos bônus pela conquista
-            $sql = "SELECT pontos_necessarios FROM conquistas WHERE id = ?";
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$conquista_id]);
-            $pontos_bonus = $stmt->fetchColumn();
-            
-            // Adicionar pontos bônus sem recursão
-            $sql = "UPDATE usuarios_progresso SET pontos_total = pontos_total + ? WHERE usuario_id = ?";
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$pontos_bonus, $usuario_id]);
+            if ($resultado) {
+                error_log("CONQUISTA DEBUG - Conquista concedida com sucesso!");
+                
+                // Adicionar pontos bônus pela conquista
+                $sql = "SELECT pontos_necessarios FROM conquistas WHERE id = ?";
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute([$conquista_id]);
+                $pontos_bonus = $stmt->fetchColumn();
+                
+                error_log("CONQUISTA DEBUG - Adicionando $pontos_bonus pontos bônus");
+                $this->adicionarPontos($usuario_id, $pontos_bonus, 'conquista');
+            } else {
+                error_log("CONQUISTA DEBUG - Erro ao conceder conquista!");
+            }
+        } else {
+            error_log("CONQUISTA DEBUG - Usuário já possui esta conquista");
         }
     }
     
     // Atualizar streak do usuário
     public function atualizarStreak($usuario_id) {
+        // Garantir que o usuário tenha um registro de progresso
         $this->garantirProgressoUsuario($usuario_id);
         
         $sql = "SELECT ultimo_login FROM usuarios_progresso WHERE usuario_id = ?";
@@ -182,10 +206,12 @@ class Gamificacao {
         $ontem = date('Y-m-d', strtotime('-1 day'));
         
         if ($ultimo_login == $ontem) {
+            // Streak continua
             $sql = "UPDATE usuarios_progresso SET streak_dias = streak_dias + 1, ultimo_login = ? WHERE usuario_id = ?";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$hoje, $usuario_id]);
         } elseif ($ultimo_login != $hoje) {
+            // Streak quebrado
             $sql = "UPDATE usuarios_progresso SET streak_dias = 1, ultimo_login = ? WHERE usuario_id = ?";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$hoje, $usuario_id]);
@@ -202,6 +228,7 @@ class Gamificacao {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$usuario_id, $mes_ano, $pontos, $pontos]);
         
+        // Recalcular posições
         $this->recalcularPosicoesRanking($mes_ano);
     }
     
@@ -221,6 +248,7 @@ class Gamificacao {
     
     // Obter dados do usuário
     public function obterDadosUsuario($usuario_id) {
+        // Garantir que o usuário tenha um registro de progresso
         $this->garantirProgressoUsuario($usuario_id);
         
         $sql = "SELECT u.nome, u.email, p.nivel, p.pontos_total, p.streak_dias,
@@ -234,6 +262,7 @@ class Gamificacao {
         
         $dados = $stmt->fetch();
         
+        // Garantir que sempre retorne dados válidos
         if (!$dados) {
             return [
                 'nome' => 'Usuário',
@@ -264,6 +293,8 @@ class Gamificacao {
     // Obter ranking mensal
     public function obterRankingMensal($limite = 10) {
         $mes_ano = date('Y-m');
+        
+        // Validar limite para evitar SQL injection
         $limite = (int)$limite;
         if ($limite <= 0) {
             $limite = 10;

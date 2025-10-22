@@ -14,6 +14,9 @@ $view_mode = isset($_GET['view']);
 
 // Processar simulados pré-definidos
 if ($predefined_type) {
+    // Debug: Log do tipo de simulado solicitado
+    error_log("SIMULADO DEBUG - Tipo solicitado: $predefined_type");
+    
     $predefined_configs = [
         'geral' => [
             'nome' => 'Simulado Geral Básico',
@@ -56,6 +59,33 @@ if ($predefined_type) {
     $simulado = $stmt->fetch();
     
     if (!$simulado) {
+        // Debug: Log de criação de novo simulado
+        error_log("SIMULADO DEBUG - Criando novo simulado: {$config['nome']} para usuário: {$_SESSION['usuario_id']}");
+        
+        // Verificar se há questões suficientes disponíveis
+        $sql_verificacao = "SELECT COUNT(DISTINCT q.id) as total_questoes FROM questoes q 
+                           LEFT JOIN disciplinas d ON q.disciplina_id = d.id 
+                           WHERE q.edital_id IN (SELECT id FROM editais WHERE usuario_id = ?)";
+        $params_verificacao = [$_SESSION["usuario_id"]];
+        
+        if ($config['disciplinas']) {
+            $placeholders_verificacao = str_repeat('?,', count($config['disciplinas']) - 1) . '?';
+            $sql_verificacao .= " AND d.nome_disciplina IN ($placeholders_verificacao)";
+            $params_verificacao = array_merge($config['disciplinas'], $params_verificacao);
+        }
+        
+        $stmt_verificacao = $pdo->prepare($sql_verificacao);
+        $stmt_verificacao->execute($params_verificacao);
+        $total_disponivel = $stmt_verificacao->fetchColumn();
+        
+        // Debug: Log de questões disponíveis
+        error_log("SIMULADO DEBUG - Questões disponíveis: $total_disponivel, Solicitadas: {$config['quantidade']}");
+        
+        if ($total_disponivel < $config['quantidade']) {
+            // Ajustar quantidade para o que está disponível
+            $config['quantidade'] = max(1, $total_disponivel);
+            error_log("SIMULADO DEBUG - Ajustando quantidade para: {$config['quantidade']}");
+        }
         // Criar novo simulado pré-definido
         $sql = "INSERT INTO simulados (usuario_id, nome, questoes_total) VALUES (?, ?, ?)";
         $stmt = $pdo->prepare($sql);
@@ -72,7 +102,7 @@ if ($predefined_type) {
             $params = $config['disciplinas'];
         }
         
-        $sql = "SELECT q.* FROM questoes q 
+        $sql = "SELECT DISTINCT q.* FROM questoes q 
                 LEFT JOIN disciplinas d ON q.disciplina_id = d.id 
                 $where_clause
                 AND q.edital_id IN (SELECT id FROM editais WHERE usuario_id = ?)
@@ -83,21 +113,31 @@ if ($predefined_type) {
         $stmt->execute($params);
         $questoes_selecionadas = $stmt->fetchAll();
         
-        // Se não há questões suficientes, pegar todas as disponíveis
+        // Debug: Log de questões selecionadas
+        error_log("SIMULADO DEBUG - Questões selecionadas (primeira tentativa): " . count($questoes_selecionadas));
+        
+        // Se não há questões suficientes, pegar todas as disponíveis (sem duplicatas)
         if (count($questoes_selecionadas) < $config['quantidade']) {
-            $sql = "SELECT q.* FROM questoes q 
+            $sql = "SELECT DISTINCT q.* FROM questoes q 
                     WHERE q.edital_id IN (SELECT id FROM editais WHERE usuario_id = ?)
                     ORDER BY RAND() LIMIT " . $config['quantidade'];
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$_SESSION["usuario_id"]]);
             $questoes_selecionadas = $stmt->fetchAll();
+            
+            // Debug: Log de questões selecionadas (segunda tentativa)
+            error_log("SIMULADO DEBUG - Questões selecionadas (segunda tentativa): " . count($questoes_selecionadas));
         }
         
-        // Adicionar questões ao simulado
+        // Adicionar questões ao simulado (evitar duplicatas)
+        $questoes_ja_adicionadas = [];
         foreach ($questoes_selecionadas as $questao) {
-            $sql = "INSERT INTO simulados_questoes (simulado_id, questao_id) VALUES (?, ?)";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$simulado_id, $questao['id']]);
+            if (!in_array($questao['id'], $questoes_ja_adicionadas)) {
+                $sql = "INSERT INTO simulados_questoes (simulado_id, questao_id) VALUES (?, ?)";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$simulado_id, $questao['id']]);
+                $questoes_ja_adicionadas[] = $questao['id'];
+            }
         }
         
         // Recarregar dados do simulado

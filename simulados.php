@@ -76,6 +76,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['finalizar_simulado']))
             $resposta_normalizada = strtoupper(trim($resposta));
             $resposta_correta_normalizada = strtoupper(trim($resposta_correta));
 
+            // Debug: Log das respostas para verificação
+            error_log("SIMULADO DEBUG - Questão ID: $questao_id, Resposta usuário: '$resposta_normalizada', Resposta correta: '$resposta_correta_normalizada'");
+
             $acertou = ($resposta_normalizada == $resposta_correta_normalizada) ? 1 : 0;
             $pontos_questao = $acertou ? 10 : 0;
 
