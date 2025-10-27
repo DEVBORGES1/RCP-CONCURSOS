@@ -1,223 +1,199 @@
-# 🎓 Sistema de Concursos - Plataforma Gamificada de Estudos
+# 🎓 RCP - Sistema de Concursos
 
-Uma plataforma completa para candidatos a concursos públicos que combina tecnologia avançada com gamificação para criar a experiência de estudo mais envolvente e eficiente.
+Plataforma gamificada de estudos para concursos públicos com arquitetura MVC profissional.
 
-## ✨ Funcionalidades Principais
+---
 
-### 🎮 Sistema de Gamificação (Estilo Duolingo)
-- **Pontos e Níveis**: Ganhe pontos respondendo questões e suba de nível
-- **Conquistas**: Desbloqueie medalhas e conquistas especiais
-- **Ranking Mensal**: Compete com outros estudantes
-- **Streak**: Mantenha uma sequência de dias estudando
+## 🚀 Início Rápido
 
-### 📊 Dashboard Inteligente
-- **Estatísticas Visuais**: Acompanhe seu progresso com gráficos
-- **Métricas de Performance**: Taxa de acerto, questões respondidas, tempo de estudo
-- **Progresso Detalhado**: Visualização clara da evolução
+### Requisitos
+- PHP 7.4+
+- MySQL 5.7+
+- Apache/Nginx
 
-### 📚 Banco de Questões
-- **Upload de Editais**: Envie PDFs de editais e provas anteriores
-- **Questões Personalizadas**: Cadastre questões por disciplina
-- **Prática Individual**: Responda questões com feedback imediato
+### Instalação
 
-### 📝 Simulados Inteligentes
-- **Criação Personalizada**: Escolha quantidade e disciplinas
-- **Timer Integrado**: Controle de tempo durante o simulado
-- **Correção Automática**: Feedback instantâneo com pontuação
-- **Histórico Completo**: Acompanhe todos os simulados realizados
-
-### 📅 Cronograma de Estudos
-- **Geração Automática**: Baseado no tempo disponível e peso das disciplinas
-- **Acompanhamento**: Marque horas estudadas e progresso
-- **Flexibilidade**: Adaptável às suas necessidades
-
-## 🚀 Instalação
-
-### Pré-requisitos
-- PHP 7.4 ou superior
-- MySQL 5.7 ou superior
-- Servidor web (Apache/Nginx)
-
-### Passos de Instalação
-
-1. **Clone o repositório**
+1. **Configure o banco de dados**:
 ```bash
-git clone [url-do-repositorio]
-cd RCP-CONCURSOPUBLICO-main
-```
-
-2. **Configure o banco de dados**
-```sql
--- Execute o arquivo banco.sql no MySQL
 mysql -u root -p < banco.sql
 ```
 
-3. **Configure a conexão**
-```php
-// Edite o arquivo conexao.php
-$host = "localhost";
-$db   = "concursos";
-$user = "seu_usuario";
-$pass = "sua_senha";
+2. **Configure a conexão**:
+Edite `config/config.php` ou `conexao.php`
+
+3. **Acesse o sistema**:
+```
+http://localhost/RCP-CONCURSOS/
 ```
 
-4. **Configure permissões**
+---
+
+## 📁 Estrutura do Projeto
+
+```
+├── app/              # Código MVC (Nova arquitetura)
+├── old_code/         # Código antigo (em migração)
+├── docs/             # Documentação técnica
+├── config/           # Configurações
+├── classes/          # Classes antigas
+├── setup/            # Scripts de instalação
+├── css/              # Estilos
+├── uploads/          # Arquivos enviados
+└── archive/          # Arquivos arquivados
+```
+
+**📚 [Ver documentação completa da estrutura](docs/ESTRUTURA_PROJETO.md)**
+
+---
+
+## 🎯 Funcionalidades
+
+### ✅ Implementadas (MVC)
+- 🏠 Homepage moderna
+- 🔐 Sistema de login/registro
+- 📊 Dashboard gamificado
+- 📈 Sistema de progresso
+- 🎮 Gamificação (pontos, níveis, streak)
+
+### 🔄 Em Migração
+- 📝 Banco de questões
+- 📋 Simulados personalizados
+- 📄 Upload de editais
+- 🎥 Videoaulas
+- 👤 Perfil do usuário
+
+---
+
+## 🏗️ Arquitetura
+
+### Sistema MVC (Novo)
+```
+app/
+├── Controllers/    # Lógica de controle
+├── Models/         # Acesso a dados
+├── Views/          # Apresentação
+└── Core/           # Classes base
+```
+
+**📖 [Entender a arquitetura MVC](docs/ARQUITETURA_MVC.md)**
+
+### Características
+- ✅ Separação de responsabilidades
+- ✅ Orientação a objetos (SOLID)
+- ✅ PSR-4 Autoloading
+- ✅ Sistema de rotas
+- ✅ Segurança (Prepared Statements)
+
+---
+
+## 📚 Documentação
+
+| Documento | Descrição |
+|-----------|-----------|
+| [ESTRUTURA_PROJETO.md](docs/ESTRUTURA_PROJETO.md) | Organização do projeto |
+| [ARQUITETURA_MVC.md](docs/ARQUITETURA_MVC.md) | Arquitetura técnica |
+| [README_MIGRACAO.md](docs/README_MIGRACAO.md) | Como migrar código |
+| [GUIA_COMPLETO_MIGRACAO.md](docs/GUIA_COMPLETO_MIGRACAO.md) | Guia visual completo |
+| [README_TECNICO.md](docs/README_TECNICO.md) | Referência técnica |
+
+---
+
+## 🎮 Como Usar
+
+### Usuário Final
+1. Cadastre-se em `/register`
+2. Faça login em `/login`
+3. Acesse o dashboard
+4. Comece a estudar!
+
+### Desenvolvedor
+
+#### Usar Sistema Antigo
 ```bash
-chmod 755 uploads/
-chmod 644 *.php
+http://localhost/RCP-CONCURSOS/index.php
 ```
 
-5. **Acesse o sistema**
-```
-http://localhost/RCP-CONCURSOPUBLICO-main/
-```
-
-## 🎯 Como Usar
-
-### 1. Cadastro e Login
-- Acesse a página inicial
-- Clique em "Criar Conta" para se cadastrar
-- Faça login com suas credenciais
-
-### 2. Upload de Editais
-- Vá para "Upload Edital"
-- Selecione um arquivo PDF do edital
-- O sistema processará automaticamente
-
-### 3. Cadastro de Questões
-- Acesse "Banco de Questões"
-- Adicione questões manualmente
-- Organize por disciplinas
-
-### 4. Criação de Simulados
-- Vá para "Simulados"
-- Escolha quantidade de questões
-- Selecione disciplinas (opcional)
-- Inicie o simulado
-
-### 5. Acompanhamento
-- Visualize seu progresso no Dashboard
-- Acompanhe conquistas e ranking
-- Monitore estatísticas de estudo
-
-## 🏗️ Arquitetura do Sistema
-
-### Estrutura de Arquivos
-```
-├── classes/
-│   └── Gamificacao.php          # Sistema de gamificação
-├── css/
-│   └── style.css               # Estilos modernos e responsivos
-├── uploads/                    # Diretório para arquivos enviados
-├── banco.sql                   # Estrutura do banco de dados
-├── conexao.php                 # Configuração de conexão
-├── index.php                   # Página inicial
-├── login.php                   # Sistema de login
-├── register.php                # Sistema de cadastro
-├── dashboard.php               # Dashboard principal
-├── questoes.php               # Banco de questões
-├── questao_individual.php      # Questão individual
-├── simulados.php               # Gerenciamento de simulados
-├── simulado.php                # Execução de simulados
-├── upload_edital.php           # Upload de editais
-├── gerar_cronograma.php        # Geração de cronogramas
-└── logout.php                  # Logout do sistema
+#### Usar Sistema MVC (Recomendado)
+```bash
+http://localhost/RCP-CONCURSOS/mvc_index.php
 ```
 
-### Banco de Dados
-- **usuarios**: Dados dos usuários
-- **usuarios_progresso**: Progresso e gamificação
-- **conquistas**: Sistema de conquistas
-- **usuarios_conquistas**: Conquistas desbloqueadas
-- **ranking_mensal**: Rankings mensais
-- **editais**: Editais enviados
-- **disciplinas**: Disciplinas por edital
-- **questoes**: Banco de questões
-- **respostas_usuario**: Respostas dos usuários
-- **simulados**: Simulados criados
-- **simulados_questoes**: Questões dos simulados
-- **cronogramas**: Cronogramas de estudo
-- **cronograma_detalhado**: Detalhes dos cronogramas
+#### Criar Nova Funcionalidade
+```php
+// 1. Model
+app/Models/MinhaEntidade.php
 
-## 🎮 Sistema de Gamificação
+// 2. Controller
+app/Controllers/MinhaEntidadeController.php
 
-### Pontuação
-- **Questão Correta**: 10 pontos
-- **Simulado Completo**: Pontos baseados na performance
-- **Conquistas**: Pontos bônus especiais
-- **Streak**: Pontos por dias consecutivos
+// 3. View
+app/Views/pages/minha_entidade/index.php
 
-### Níveis
-- Fórmula: `nível = floor(sqrt(pontos / 100)) + 1`
-- Cada nível requer mais pontos para avançar
-- Desbloqueie novas funcionalidades
+// 4. Rota (app/Core/Router.php)
+$this->get('/minha-entidade', 'MinhaEntidadeController@index');
+```
 
-### Conquistas Disponíveis
-- 🎯 Primeira Questão
-- 🌟 Iniciante (10 questões)
-- 📚 Estudioso (50 questões)
-- 🏆 Expert (100 questões)
-- 👑 Mestre (500 questões)
-- 🔥 Streak 3, 7, 30 dias
-- ⭐ Níveis 5, 10
-- 📝 Simulador
-- 💯 Perfeccionista
+**📖 [Ver guia completo](docs/GUIA_COMPLETO_MIGRACAO.md)**
 
-## 🔧 Tecnologias Utilizadas
+---
 
-- **Backend**: PHP 7.4+
-- **Banco de Dados**: MySQL 5.7+
+## 🔧 Tecnologias
+
+- **Backend**: PHP 7.4+, PDO
+- **Banco**: MySQL 5.7+
 - **Frontend**: HTML5, CSS3, JavaScript
-- **Design**: CSS Grid, Flexbox, Gradientes
-- **Ícones**: Font Awesome 6.0
-- **Segurança**: Prepared Statements, Password Hashing
+- **Arquitetura**: MVC, SOLID, PSR-4
 
-## 🚀 Funcionalidades Futuras
+---
 
-### Próximas Implementações
-- [ ] **Análise de Edital com IA**: Extração automática de disciplinas
-- [ ] **Cronograma Inteligente**: Algoritmo baseado em peso das disciplinas
-- [ ] **Web Crawler**: Busca automática de provas anteriores
-- [ ] **Exportação**: Cronogramas em PDF/Google Calendar
-- [ ] **Notificações**: Lembretes de estudo
-- [ ] **Chat**: Comunidade de estudantes
-- [ ] **Mobile App**: Aplicativo móvel
+## 📊 Status do Projeto
 
-### Melhorias Planejadas
-- [ ] **OCR Avançado**: Leitura de PDFs digitalizados
-- [ ] **IA para Sugestões**: Recomendações personalizadas
-- [ ] **Analytics Avançado**: Relatórios detalhados
-- [ ] **Integração Social**: Compartilhamento de progresso
+### Versão Atual
+- **Sistema Principal**: Funcional (código antigo)
+- **Sistema MVC**: Parcialmente implementado
+- **Migração**: Em andamento
 
-## 🤝 Contribuição
+### Próximas Etapas
+1. Completar migração para MVC
+2. Implementar funcionalidades restantes
+3. Adicionar testes
+4. Otimização de performance
 
-### Como Contribuir
+---
+
+## 🤝 Contribuindo
+
 1. Fork o projeto
-2. Crie uma branch para sua feature
-3. Commit suas mudanças
-4. Push para a branch
+2. Crie uma branch (`git checkout -b feature/MinhaFeature`)
+3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
+4. Push para a branch (`git push origin feature/MinhaFeature`)
 5. Abra um Pull Request
 
-### Padrões de Código
-- Use PSR-12 para PHP
-- Comente funções complexas
-- Mantenha consistência no CSS
-- Teste todas as funcionalidades
+---
 
-## 📄 Licença
+## 📝 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
+Este projeto está sob a licença MIT.
+
+---
 
 ## 👥 Equipe
 
-- **Desenvolvedor Principal**: DEVBORGES1
+- **Desenvolvedor**: DEVBORGES1
 - **Design**: DEVBORGES1 / FABIANO PIROLLI
-- **Testes**: DEVBORGES1 / FABIANO PIROLLI
-
-## 📞 Suporte
-
-Para dúvidas, sugestões ou problemas:
 - **Email**: Bstech.ti@gmail.com
+
+---
+
+## 🎉 Funcionalidades Principais
+
+- 📚 **Banco de Questões**: Milhares de questões organizadas
+- 📋 **Simulados Personalizados**: Crie simulados customizados
+- 🎮 **Gamificação**: Pontos, níveis, conquistas
+- 📈 **Dashboard Inteligente**: Acompanhe seu progresso
+- 📄 **Upload de Editais**: Envie e analise editais
+- 🎥 **Videoaulas**: Conteúdo estruturado
+
 ---
 
 **Desenvolvido com ❤️ para candidatos a concursos públicos**
