@@ -1,12 +1,12 @@
-# 📁 Estrutura do Projeto - RCP Sistema de Concursos
+# Estrutura do Projeto - RCP Sistema de Concursos
 
-## 📊 Visão Geral da Organização
+## Visão Geral da Organização
 
 O projeto foi reorganizado seguindo princípios de **arquitetura limpa** e **separação de responsabilidades**.
 
 ---
 
-## 🎯 Estrutura de Pastas
+## Estrutura de Pastas
 
 ```
 RCP-CONCURSOS/
@@ -62,7 +62,7 @@ RCP-CONCURSOS/
 
 ## 📂 Descrição Detalhada
 
-### 📱 app/ - Código da Aplicação
+### app/ - Código da Aplicação
 
 **Status**: ✅ Nova arquitetura MVC implementada
 
@@ -93,7 +93,7 @@ RCP-CONCURSOS/
 
 ---
 
-### 📚 docs/ - Documentação
+### docs/ - Documentação
 
 Todos os documentos técnicos estão aqui:
 
@@ -105,7 +105,7 @@ Todos os documentos técnicos estão aqui:
 
 ---
 
-### ⚙️ config/ - Configurações
+### config/ - Configurações
 
 Centralização de todas as configurações:
 
@@ -114,7 +114,7 @@ Centralização de todas as configurações:
 
 ---
 
-### 🗄️ classes/ - Classes Antigas
+### classes/ - Classes Antigas
 
 Classes do sistema antigo ainda em uso:
 
@@ -128,7 +128,7 @@ Classes do sistema antigo ainda em uso:
 
 ---
 
-### 📦 old_code/ - Código Antigo
+### old_code/ - Código Antigo
 
 Arquivos PHP do sistema antigo (pré-MVC):
 
@@ -146,7 +146,7 @@ Arquivos PHP do sistema antigo (pré-MVC):
 
 ---
 
-### 🔧 setup/ - Scripts de Instalação
+### setup/ - Scripts de Instalação
 
 Scripts para configuração inicial:
 
@@ -159,7 +159,7 @@ Scripts para configuração inicial:
 
 ---
 
-### 📦 archive/ - Arquivos Arquivados
+### archive/ - Arquivos Arquivados
 
 Arquivos de teste, debug e correção:
 
@@ -174,7 +174,7 @@ Arquivos de teste, debug e correção:
 
 ---
 
-## 🚀 Fluxo de Trabalho
+## Fluxo de Trabalho
 
 ### 1. Desenvolvimento Atual
 ```bash
@@ -212,22 +212,22 @@ app/Core/Router.php
 
 ---
 
-## 📋 Status de Migração
+## Status de Migração
 
-### ✅ Migrado para MVC
+### Migrado para MVC
 - [x] Homepage (`index.php`)
 - [x] Login (`login.php` → `AuthController`)
 - [x] Registro (`register.php` → `AuthController`)
 - [x] Dashboard (`dashboard.php` → `DashboardController`)
 
-### 🔄 Em Migração
+### Em Migração
 - [ ] Questões (`old_code/questoes.php`)
 - [ ] Simulados (`old_code/simulados.php`)
 - [ ] Editais (`old_code/editais.php`)
 - [ ] Perfil (`old_code/perfil.php`)
 - [ ] Videoaulas (`old_code/videoaulas.php`)
 
-### ⏳ Pendente
+### Pendente
 - [ ] Classes → Services
 - [ ] Upload de editais
 - [ ] Geração de cronogramas
@@ -235,18 +235,18 @@ app/Core/Router.php
 
 ---
 
-## 🗑️ Arquivos Seguros para Deletar
+## Arquivos Seguros para Deletar
 
 Se precisar de mais espaço, estes arquivos podem ser deletados com segurança:
 
-### ✅ Deletar com Segurança
+### Deletar com Segurança
 ```bash
 archive/              # Arquivos de teste/debug
 old_code/             # Após migração completa
 mysql-8.4/            # Logs do sistema (dentro de archive/)
 ```
 
-### ❌ NÃO Deletar
+### NÃO Deletar
 ```bash
 app/                  # Código MVC
 config/               # Configurações
@@ -259,7 +259,7 @@ banco.sql             # Estrutura do banco
 
 ---
 
-## 📊 Métricas de Organização
+## Métricas de Organização
 
 | Categoria | Arquivos |
 |-----------|----------|
@@ -272,7 +272,7 @@ banco.sql             # Estrutura do banco
 
 ---
 
-## 🎯 Próximos Passos
+## Próximos Passos
 
 1. **Migrar funcionalidades de `old_code/`** para MVC
 2. **Transformar classes** em Services
@@ -282,7 +282,7 @@ banco.sql             # Estrutura do banco
 
 ---
 
-## 📚 Leia Mais
+## Leia Mais
 
 - [Arquitetura MVC](ARQUITETURA_MVC.md)
 - [Guia de Migração](README_MIGRACAO.md)
@@ -290,5 +290,5 @@ banco.sql             # Estrutura do banco
 
 ---
 
-**Projeto organizado para máxima clareza e manutenibilidade! 🚀**
+**Projeto organizado para máxima clareza e manutenibilidade!**
 

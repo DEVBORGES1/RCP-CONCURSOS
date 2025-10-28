@@ -72,9 +72,13 @@ class Router
         
         // Remove barra inicial se existir
         $path = ltrim($path, '/');
+        
+        // Remove base path (RCP-CONCURSOS)
+        $path = str_replace('RCP-CONCURSOS/', '', $path);
+        $path = str_replace('RCP-CONCURSOS', '', $path);
 
         // Se estiver vazio, assume index
-        if (empty($path)) {
+        if (empty($path) || $path === 'mvc_index.php') {
             $path = '/';
         }
 
@@ -85,8 +89,8 @@ class Router
             }
         }
 
-        // Rota não encontrada
-        $this->handle404();
+        // Rota não encontrada - exibir debug
+        $this->handle404($path);
     }
 
     /**
@@ -142,13 +146,22 @@ class Router
     /**
      * Manipula erro 404
      * 
+     * @param string $path Path que não foi encontrado
      * @return void
      */
-    private function handle404(): void
+    private function handle404(string $path = ''): void
     {
         http_response_code(404);
         echo "<h1>404 - Página não encontrada</h1>";
-        echo "<p>A página que você procura não existe.</p>";
+        echo "<p>A página '{$path}' que você procura não existe.</p>";
+        echo "<p><strong>Debug:</strong></p>";
+        echo "<pre>";
+        echo "Path recebido: " . htmlspecialchars($path) . "\n";
+        echo "Rotas disponíveis:\n";
+        foreach ($this->routes as $route) {
+            echo "  - {$route['method']} {$route['path']}\n";
+        }
+        echo "</pre>";
     }
 
     /**

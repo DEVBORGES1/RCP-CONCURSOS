@@ -12,7 +12,7 @@ return [
         'host' => 'localhost',
         'name' => 'concursos',
         'user' => 'root',
-        'password' => '',
+        'password' => '1234',
         'charset' => 'utf8mb4',
         'options' => [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

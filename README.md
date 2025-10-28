@@ -1,15 +1,14 @@
-# 🎓 RCP - Sistema de Concursos
+# RCP - Sistema de Concursos
 
 Plataforma gamificada de estudos para concursos públicos com arquitetura MVC profissional.
 
----
-
-## 🚀 Início Rápido
+## Início Rápido
 
 ### Requisitos
 - PHP 7.4+
 - MySQL 5.7+
 - Apache/Nginx
+- Composer (para autoloading)
 
 ### Instalação
 
@@ -19,149 +18,234 @@ mysql -u root -p < banco.sql
 ```
 
 2. **Configure a conexão**:
-Edite `config/config.php` ou `conexao.php`
+Edite `config/config.php` com suas credenciais:
+```php
+'database' => [
+    'host' => 'localhost',
+    'name' => 'concursos',
+    'user' => 'seu_usuario',
+    'password' => 'sua_senha',
+]
+```
 
-3. **Acesse o sistema**:
+3. **Instale as dependências** (opcional):
+```bash
+composer install
+```
+
+4. **Acesse o sistema**:
 ```
 http://localhost/RCP-CONCURSOS/
 ```
 
----
-
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
-├── app/              # Código MVC (Nova arquitetura)
-├── old_code/         # Código antigo (em migração)
-├── docs/             # Documentação técnica
-├── config/           # Configurações
-├── classes/          # Classes antigas
-├── setup/            # Scripts de instalação
-├── css/              # Estilos
-├── uploads/          # Arquivos enviados
-└── archive/          # Arquivos arquivados
+RCP-CONCURSOS/
+├── app/                    # Código MVC (Nova arquitetura)
+│   ├── Controllers/        # Controladores
+│   ├── Models/             # Modelos de dados
+│   ├── Views/              # Templates/Páginas
+│   ├── Core/               # Classes base
+│   └── Services/          # Serviços de negócio
+│
+├── old_code/              # Código antigo (em migração)
+│   ├── questoes.php
+│   ├── simulados.php
+│   ├── editais.php
+│   └── ...
+│
+├── docs/                  # Documentação técnica
+│   ├── ARQUITETURA_MVC.md
+│   ├── README_MIGRACAO.md
+│   ├── README_TECNICO.md
+│   └── ...
+│
+├── config/                # Configurações
+│   ├── config.php
+│   └── database.php
+│
+├── classes/               # Classes antigas
+│   ├── Gamificacao.php
+│   ├── AnalisadorEdital.php
+│   └── ...
+│
+├── setup/                 # Scripts de instalação
+├── css/                   # Estilos
+├── uploads/               # Uploads de usuários
+└── archive/               # Arquivos arquivados
 ```
 
-**📚 [Ver documentação completa da estrutura](docs/ESTRUTURA_PROJETO.md)**
+**Ver documentação completa**: [docs/ESTRUTURA_PROJETO.md](docs/ESTRUTURA_PROJETO.md)
 
----
+## Funcionalidades
 
-## 🎯 Funcionalidades
+### Implementadas (MVC)
+- [x] Homepage moderna e responsiva
+- [x] Sistema de autenticação (login/registro)
+- [x] Dashboard gamificado com estatísticas
+- [x] Sistema de progresso e níveis
+- [x] Gamificação completa (pontos, conquistas, ranking)
 
-### ✅ Implementadas (MVC)
-- 🏠 Homepage moderna
-- 🔐 Sistema de login/registro
-- 📊 Dashboard gamificado
-- 📈 Sistema de progresso
-- 🎮 Gamificação (pontos, níveis, streak)
+### Em Migração
+- [ ] Banco de questões
+- [ ] Simulados personalizados
+- [ ] Upload e análise de editais
+- [ ] Videoaulas
+- [ ] Perfil do usuário
+- [ ] Cronograma de estudos
 
-### 🔄 Em Migração
-- 📝 Banco de questões
-- 📋 Simulados personalizados
-- 📄 Upload de editais
-- 🎥 Videoaulas
-- 👤 Perfil do usuário
-
----
-
-## 🏗️ Arquitetura
+## Arquitetura
 
 ### Sistema MVC (Novo)
+
 ```
 app/
-├── Controllers/    # Lógica de controle
+├── Controllers/    # Lógica de controle HTTP
+│   ├── AuthController.php
+│   ├── DashboardController.php
+│   └── HomeController.php
+│
 ├── Models/         # Acesso a dados
+│   ├── Usuario.php
+│   ├── Questao.php
+│   ├── Simulado.php
+│   ├── Edital.php
+│   └── Progresso.php
+│
 ├── Views/          # Apresentação
+│   ├── layouts/
+│   ├── pages/
+│   └── components/
+│
 └── Core/           # Classes base
+    ├── BaseModel.php
+    ├── BaseController.php
+    ├── Router.php
+    └── Autoloader.php
 ```
 
-**📖 [Entender a arquitetura MVC](docs/ARQUITETURA_MVC.md)**
+**Entender a arquitetura**: [docs/ARQUITETURA_MVC.md](docs/ARQUITETURA_MVC.md)
 
 ### Características
-- ✅ Separação de responsabilidades
-- ✅ Orientação a objetos (SOLID)
-- ✅ PSR-4 Autoloading
-- ✅ Sistema de rotas
-- ✅ Segurança (Prepared Statements)
+- Separação de responsabilidades (MVC)
+- Orientação a objetos (SOLID)
+- PSR-4 Autoloading
+- Sistema de rotas
+- Segurança (Prepared Statements, hash de senhas)
 
----
-
-## 📚 Documentação
+## Documentação
 
 | Documento | Descrição |
 |-----------|-----------|
 | [ESTRUTURA_PROJETO.md](docs/ESTRUTURA_PROJETO.md) | Organização do projeto |
-| [ARQUITETURA_MVC.md](docs/ARQUITETURA_MVC.md) | Arquitetura técnica |
-| [README_MIGRACAO.md](docs/README_MIGRACAO.md) | Como migrar código |
-| [GUIA_COMPLETO_MIGRACAO.md](docs/GUIA_COMPLETO_MIGRACAO.md) | Guia visual completo |
+| [ARQUITETURA_MVC.md](docs/ARQUITETURA_MVC.md) | Arquitetura técnica completa |
+| [README_MIGRACAO.md](docs/README_MIGRACAO.md) | Guia de migração e uso |
 | [README_TECNICO.md](docs/README_TECNICO.md) | Referência técnica |
+| [FUNCIONALIDADES.md](docs/FUNCIONALIDADES.md) | Lista completa de funcionalidades |
+| [STATUS_MIGRACAO.md](docs/STATUS_MIGRACAO.md) | Status da migração MVC |
 
----
+## Como Usar
 
-## 🎮 Como Usar
+### Para Usuários Finais
 
-### Usuário Final
 1. Cadastre-se em `/register`
 2. Faça login em `/login`
 3. Acesse o dashboard
 4. Comece a estudar!
 
-### Desenvolvedor
+### Para Desenvolvedores
 
-#### Usar Sistema Antigo
+#### Usar Sistema Antigo (Completo)
 ```bash
 http://localhost/RCP-CONCURSOS/index.php
 ```
 
-#### Usar Sistema MVC (Recomendado)
+#### Usar Sistema MVC (Novo)
 ```bash
 http://localhost/RCP-CONCURSOS/mvc_index.php
 ```
 
+#### Ativar Sistema MVC Permanente
+
+```bash
+# Backup
+cp index.php index_old.php
+
+# Ativar MVC
+cp mvc_index.php index.php
+```
+
 #### Criar Nova Funcionalidade
+
+1. **Criar Model**:
 ```php
-// 1. Model
-app/Models/MinhaEntidade.php
+// app/Models/MinhaEntidade.php
+namespace App\Models;
+use App\Core\BaseModel;
 
-// 2. Controller
-app/Controllers/MinhaEntidadeController.php
+class MinhaEntidade extends BaseModel
+{
+    protected string $table = 'minha_tabela';
+}
+```
 
-// 3. View
-app/Views/pages/minha_entidade/index.php
+2. **Criar Controller**:
+```php
+// app/Controllers/MinhaEntidadeController.php
+namespace App\Controllers;
+use App\Core\BaseController;
+use App\Models\MinhaEntidade;
 
-// 4. Rota (app/Core/Router.php)
+class MinhaEntidadeController extends BaseController
+{
+    public function index(): void
+    {
+        echo $this->view('minha_entidade/index', $data);
+    }
+}
+```
+
+3. **Criar View**:
+```php
+// app/Views/pages/minha_entidade/index.php
+<h1>Minha Entidade</h1>
+```
+
+4. **Adicionar Rota**:
+```php
+// app/Core/Router.php - método defineRoutes()
 $this->get('/minha-entidade', 'MinhaEntidadeController@index');
 ```
 
-**📖 [Ver guia completo](docs/GUIA_COMPLETO_MIGRACAO.md)**
+Ver guia completo: [docs/README_MIGRACAO.md](docs/README_MIGRACAO.md)
 
----
-
-## 🔧 Tecnologias
+## Tecnologias
 
 - **Backend**: PHP 7.4+, PDO
 - **Banco**: MySQL 5.7+
 - **Frontend**: HTML5, CSS3, JavaScript
-- **Arquitetura**: MVC, SOLID, PSR-4
+- **Arquitetura**: MVC Pattern, SOLID Principles, PSR-4
+- **Autoloading**: Composer PSR-4
 
----
+## Status do Projeto
 
-## 📊 Status do Projeto
+### Versão Atual: 2.0.0
 
-### Versão Atual
-- **Sistema Principal**: Funcional (código antigo)
-- **Sistema MVC**: Parcialmente implementado
+- **Sistema Principal**: Funcional (código antigo em `old_code/`)
+- **Sistema MVC**: Parcialmente implementado (app/)
 - **Migração**: Em andamento
+- **Documentação**: Completa
 
 ### Próximas Etapas
-1. Completar migração para MVC
-2. Implementar funcionalidades restantes
-3. Adicionar testes
-4. Otimização de performance
+- [ ] Completar migração para MVC
+- [ ] Implementar funcionalidades restantes
+- [ ] Adicionar testes automatizados
+- [ ] Otimização de performance
 
----
+Ver status detalhado: [docs/STATUS_MIGRACAO.md](docs/STATUS_MIGRACAO.md)
 
-## 🤝 Contribuindo
+## Contribuindo
 
 1. Fork o projeto
 2. Crie uma branch (`git checkout -b feature/MinhaFeature`)
@@ -169,33 +253,31 @@ $this->get('/minha-entidade', 'MinhaEntidadeController@index');
 4. Push para a branch (`git push origin feature/MinhaFeature`)
 5. Abra um Pull Request
 
----
-
-## 📝 Licença
+## Licença
 
 Este projeto está sob a licença MIT.
 
----
-
-## 👥 Equipe
+## Equipe
 
 - **Desenvolvedor**: DEVBORGES1
 - **Design**: DEVBORGES1 / FABIANO PIROLLI
 - **Email**: Bstech.ti@gmail.com
 
+## Funcionalidades Principais
+
+- **Banco de Questões**: Milhares de questões organizadas por disciplina
+- **Simulados Personalizados**: Crie simulados customizados
+- **Gamificação**: Sistema completo de pontos, níveis e conquistas
+- **Dashboard Inteligente**: Acompanhe seu progresso detalhadamente
+- **Upload de Editais**: Envie e analise editais automaticamente
+- **Videoaulas**: Conteúdo estruturado por categoria
+- **Cronograma Inteligente**: Geração automática de planos de estudo
+- **Ranking Mensal**: Compita com outros estudantes
+
+Ver todas as funcionalidades: [docs/FUNCIONALIDADES.md](docs/FUNCIONALIDADES.md)
+
 ---
 
-## 🎉 Funcionalidades Principais
+Desenvolvido para candidatos a concursos públicos.
 
-- 📚 **Banco de Questões**: Milhares de questões organizadas
-- 📋 **Simulados Personalizados**: Crie simulados customizados
-- 🎮 **Gamificação**: Pontos, níveis, conquistas
-- 📈 **Dashboard Inteligente**: Acompanhe seu progresso
-- 📄 **Upload de Editais**: Envie e analise editais
-- 🎥 **Videoaulas**: Conteúdo estruturado
-
----
-
-**Desenvolvido com ❤️ para candidatos a concursos públicos**
-
-*Transforme seus estudos em uma jornada gamificada e eficiente!*
+Transforme seus estudos em uma jornada gamificada e eficiente!

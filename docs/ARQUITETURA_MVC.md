@@ -1,10 +1,10 @@
 # Arquitetura MVC - RCP Sistema de Concursos
 
-## 📋 Visão Geral
+## Visão Geral
 
 Este documento descreve a arquitetura **Model-View-Controller (MVC)** implementada no sistema RCP Concursos, focada em princípios de **Orientação a Objetos** e **boas práticas de desenvolvimento**.
 
-## 🏗️ Estrutura de Pastas
+## Estrutura de Pastas
 
 ```
 RCP-CONCURSOS/
@@ -47,7 +47,7 @@ RCP-CONCURSOS/
 └── composer.json                # Autoloading PSR-4
 ```
 
-## 🔧 Componentes Principais
+## Componentes Principais
 
 ### 1. Controllers (app/Controllers/)
 
@@ -156,7 +156,7 @@ Classes base que fornecem funcionalidades comuns:
 - Conexão única ao banco
 - Gerenciamento de PDO
 
-## 🔄 Fluxo de Requisição
+## Fluxo de Requisição
 
 ```
 1. Usuário acessa URL
@@ -178,7 +178,7 @@ Classes base que fornecem funcionalidades comuns:
 9. Resposta HTML é enviada ao navegador
 ```
 
-## 📝 Exemplo de Fluxo Completo
+## Exemplo de Fluxo Completo
 
 ### Rota: GET /login
 
@@ -245,7 +245,7 @@ class AuthController extends BaseController
 }
 ```
 
-## 🎯 Princípios de Design
+## Princípios de Design
 
 ### 1. Single Responsibility Principle (SRP)
 - Cada classe tem uma única responsabilidade
@@ -268,7 +268,7 @@ class AuthController extends BaseController
 - Facilita testes
 - Baixo acoplamento
 
-## 🔐 Segurança
+##  Segurança
 
 ### Implementado:
 - ✅ Prepared Statements (PDO)
@@ -277,7 +277,7 @@ class AuthController extends BaseController
 - ✅ CSRF Protection (a implementar)
 - ✅ XSS Prevention (htmlspecialchars)
 
-## 📚 Padrões de Projeto Utilizados
+##  Padrões de Projeto Utilizados
 
 ### 1. Singleton (Database)
 Garante uma única instância de conexão ao banco.
@@ -291,7 +291,7 @@ Abstração de acesso a dados.
 ### 4. Template Method (BaseController/BaseModel)
 Define estrutura comum para subclasses.
 
-## 🚀 Como Usar
+## Como Usar
 
 ### 1. Criar uma nova funcionalidade
 
@@ -338,7 +338,7 @@ class MinhaEntidadeController extends BaseController
 $this->get('/minha-entidade', 'MinhaEntidadeController@index');
 ```
 
-## 🧪 Testes
+##  Testes
 
 ### Estrutura sugerida:
 ```
@@ -348,7 +348,7 @@ tests/
 └── Integration/
 ```
 
-## 📖 Documentação de Classes
+##  Documentação de Classes
 
 ### BaseController
 ```php
@@ -376,7 +376,7 @@ tests/
  */
 ```
 
-## ✅ Vantagens da Arquitetura
+##  Vantagens da Arquitetura
 
 1. **Manutenibilidade**: Código organizado e fácil de entender
 2. **Escalabilidade**: Fácil adicionar novas funcionalidades
@@ -385,7 +385,7 @@ tests/
 5. **Documentação**: Código auto-documentado
 6. **Padrões**: Seguindo PSR-4 e boas práticas PHP
 
-## 🔄 Migração do Código Antigo
+##  Migração do Código Antigo
 
 O código antigo foi gradualmente migrado para esta arquitetura. Para usar o sistema MVC:
 
@@ -393,7 +393,7 @@ O código antigo foi gradualmente migrado para esta arquitetura. Para usar o sis
 2. Renomeie `mvc_index.php` para `index.php`
 3. Acesse: `http://localhost/RCP-CONCURSOS/`
 
-## 📞 Suporte
+##  Suporte
 
 Para dúvidas sobre a arquitetura:
 - Email: Bstech.ti@gmail.com
@@ -402,5 +402,5 @@ Para dúvidas sobre a arquitetura:
 
 ---
 
-**Desenvolvido com ❤️ seguindo princípios SOLID e boas práticas de OOP**
+**Desenvolvido seguindo princípios SOLID e boas práticas de OOP**
 

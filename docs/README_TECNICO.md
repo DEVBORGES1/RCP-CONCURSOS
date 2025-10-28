@@ -1,12 +1,10 @@
-# 📚 Documentação Técnica - RCP Sistema de Concursos (MVC)
+# Documentação Técnica - RCP Sistema de Concursos (MVC)
 
-## 📋 Visão Geral do Projeto
+## Visão Geral do Projeto
 
-Projeto refatorado de **arquitetura procedural** para **arquitetura MVC orientada a objetos**, seguindo princípios SOLID e boas práticas de desenvolvimento.
+Projeto refatorado de arquitetura procedural para arquitetura MVC orientada a objetos, seguindo princípios SOLID e boas práticas de desenvolvimento.
 
----
-
-## 🏗️ Arquitetura Implementada
+## Arquitetura Implementada
 
 ### Padrão de Arquitetura
 - **MVC** (Model-View-Controller)
@@ -48,9 +46,7 @@ Projeto refatorado de **arquitetura procedural** para **arquitetura MVC orientad
     └─────────────────────┘
 ```
 
----
-
-## 📁 Estrutura de Arquivos
+## Estrutura de Arquivos
 
 ### Core Classes (app/Core/)
 
@@ -193,9 +189,7 @@ $db = Database::getInstance();
 $connection = $db->getConnection();
 ```
 
----
-
-## 🔄 Fluxo de Execução
+## Fluxo de Execução
 
 ### Exemplo: Login
 
@@ -233,9 +227,7 @@ $connection = $db->getConnection();
 
 7. **Resposta HTML** enviada ao navegador
 
----
-
-## 🎯 Princípios Aplicados
+## Princípios Aplicados
 
 ### SOLID
 
@@ -291,33 +283,29 @@ require_once __DIR__ . '/bootstrap.php';
 $usuarios = $usuarioModel->findAll();
 ```
 
----
-
-## 🔐 Segurança Implementada
+## Segurança Implementada
 
 ### 1. SQL Injection
-- ✅ Prepared Statements (PDO)
-- ✅ Parâmetros vinculados
+- Prepared Statements (PDO)
+- Parâmetros vinculados
 
 ### 2. XSS (Cross-Site Scripting)
-- ✅ `htmlspecialchars()` em views
-- ✅ Escape de dados do usuário
+- `htmlspecialchars()` em views
+- Escape de dados do usuário
 
 ### 3. CSRF
-- 🔄 A implementar
+- A implementar
 - Token de sessão
 
 ### 4. Senha
-- ✅ Hash com `password_hash()`
-- ✅ Verificação com `password_verify()`
+- Hash com `password_hash()`
+- Verificação com `password_verify()`
 
 ### 5. Session
-- ✅ Gerenciamento seguro
-- ✅ Timeout configurável
+- Gerenciamento seguro
+- Timeout configurável
 
----
-
-## 📊 Estrutura de Banco
+## Estrutura de Banco
 
 ### Tabelas Principais
 
@@ -330,9 +318,7 @@ $usuarios = $usuarioModel->findAll();
 **editais** - Editais enviados
 **disciplinas** - Disciplinas por edital
 
----
-
-## 🧪 Como Testar
+## Como Testar
 
 ### 1. Teste de Autenticação
 ```
@@ -349,9 +335,7 @@ Acesse: http://localhost/RCP-CONCURSOS/register
 Login → Acessa: http://localhost/RCP-CONCURSOS/dashboard
 ```
 
----
-
-## 📈 Métricas do Projeto
+## Métricas do Projeto
 
 ### Código
 - **Total de Classes**: 15+
@@ -365,9 +349,7 @@ Login → Acessa: http://localhost/RCP-CONCURSOS/dashboard
 - **Views**: 5 implementadas, 20+ planejadas
 - **Services**: Prontos para expansão
 
----
-
-## 🚀 Próximos Passos
+## Próximos Passos
 
 ### Curto Prazo (1-2 semanas)
 - [ ] Migrar `questoes.php` → `QuestaoController`
@@ -387,9 +369,7 @@ Login → Acessa: http://localhost/RCP-CONCURSOS/dashboard
 - [ ] Documentação API
 - [ ] Performance optimization
 
----
-
-## 📖 Referências
+## Referências
 
 - PSR-4: https://www.php-fig.org/psr/psr-4/
 - SOLID Principles
@@ -399,5 +379,5 @@ Login → Acessa: http://localhost/RCP-CONCURSOS/dashboard
 
 ---
 
-**Desenvolvido com ❤️ seguindo princípios de engenharia de software profissional**
+**Desenvolvido seguindo princípios de engenharia de software profissional**
 

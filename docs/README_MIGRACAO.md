@@ -1,26 +1,26 @@
-# 🔄 Guia de Migração para Arquitetura MVC
+# Guia de Migração para Arquitetura MVC
 
-## 📌 Objetivo
+## Objetivo
 
-Este documento explica como migrar do sistema antigo (código spaghetti) para a nova arquitetura MVC orientada a objetos.
+Este documento explica como migrar do sistema antigo para a nova arquitetura MVC orientada a objetos.
 
-## 🎯 Por que refatorar?
+## Por que refatorar?
 
 ### Problemas do Código Antigo:
-1. ❌ Lógica misturada: PHP, HTML e SQL no mesmo arquivo
-2. ❌ Sem separação de responsabilidades
-3. ❌ Dificuldade para testar
-4. ❌ Difícil manutenção e escalabilidade
-5. ❌ Violação de princípios SOLID
+1. Lógica misturada: PHP, HTML e SQL no mesmo arquivo
+2. Sem separação de responsabilidades
+3. Dificuldade para testar
+4. Difícil manutenção e escalabilidade
+5. Violação de princípios SOLID
 
 ### Soluções da Arquitetura MVC:
-1. ✅ Separação clara de responsabilidades
-2. ✅ Código organizado e bem documentado
-3. ✅ Fácil de testar (cada componente isolado)
-4. ✅ Reutilização de código
-5. ✅ Seguindo padrões PSR-4 e SOLID
+1. Separação clara de responsabilidades
+2. Código organizado e bem documentado
+3. Fácil de testar (cada componente isolado)
+4. Reutilização de código
+5. Seguindo padrões PSR-4 e SOLID
 
-## 🚀 Como Usar a Nova Arquitetura
+## Como Usar a Nova Arquitetura
 
 ### Passo 1: Instalar Dependências
 
@@ -45,7 +45,7 @@ cp mvc_index.php index.php
 
 3. **Acessar**: `http://localhost/RCP-CONCURSOS/`
 
-## 📚 Como Trabalhar com a Arquitetura
+## Como Trabalhar com a Arquitetura
 
 ### Criar uma Nova Funcionalidade
 
@@ -108,18 +108,7 @@ class ComentarioController extends BaseController
 }
 ```
 
-**3. Definir Rota** (em `app/Core/Router.php`):
-```php
-public function defineRoutes(): void
-{
-    // ... rotas existentes
-    
-    // Nova rota
-    $this->post('/comentarios', 'ComentarioController@store');
-}
-```
-
-**4. Criar View** (`app/Views/pages/questoes/show.php`):
+**3. Criar View** (`app/Views/pages/questoes/show.php`):
 ```php
 <h1>Questão #<?= $questao['id'] ?></h1>
 <p><?= $questao['enunciado'] ?></p>
@@ -132,7 +121,12 @@ public function defineRoutes(): void
 </form>
 ```
 
-## 🎓 Conceitos Importantes
+**4. Definir Rota** (em `app/Core/Router.php`):
+```php
+$this->post('/comentarios', 'ComentarioController@store');
+```
+
+## Conceitos Importantes
 
 ### 1. Controllers
 - **Responsabilidade**: Processar requisições HTTP
@@ -144,7 +138,7 @@ public function defineRoutes(): void
 - **Responsabilidade**: Acesso a dados
 - **Não deve**: Conhecer HTTP ou views
 - **Deve**: Fornecer métodos de busca/atualização
-- **Deve**: Contar com regras de negócio básicas
+- **Deve**: Conter regras de negócio básicas
 
 ### 3. Views
 - **Responsabilidade**: Apresentação visual
@@ -152,7 +146,7 @@ public function defineRoutes(): void
 - **Deve**: Receber dados do Controller
 - **Deve**: Ser apenas HTML/CSS/PHP de apresentação
 
-## 📝 Exemplos Práticos
+## Exemplos Práticos
 
 ### Exemplo 1: Listar Questões
 
@@ -211,17 +205,17 @@ public function store(): void
 }
 ```
 
-## 🔄 Migração de Arquivos Antigos
+## Migração de Arquivos Antigos
 
 ### Arquivos a migrar:
-1. ✅ `login.php` → `app/Controllers/AuthController.php`
-2. ✅ `dashboard.php` → `app/Controllers/DashboardController.php`
-3. ✅ `index.php` → `app/Controllers/HomeController.php`
-4. 🔄 `questoes.php` → `app/Controllers/QuestaoController.php`
-5. 🔄 `simulados.php` → `app/Controllers/SimuladoController.php`
-6. 🔄 `editais.php` → `app/Controllers/EditalController.php`
+1. login.php → app/Controllers/AuthController.php
+2. dashboard.php → app/Controllers/DashboardController.php
+3. index.php → app/Controllers/HomeController.php
+4. questoes.php → app/Controllers/QuestaoController.php
+5. simulados.php → app/Controllers/SimuladoController.php
+6. editais.php → app/Controllers/EditalController.php
 
-## 🛠️ Ferramentas de Desenvolvimento
+## Ferramentas de Desenvolvimento
 
 ### Usar Namespaces Corretamente
 ```php
@@ -254,7 +248,7 @@ $this->setFlash('error', 'Erro ao processar!');
 <?php endif; ?>
 ```
 
-## ✅ Checklist de Migração
+## Checklist de Migração
 
 - [x] Estrutura de pastas criada
 - [x] Sistema de autoloading configurado
@@ -269,13 +263,13 @@ $this->setFlash('error', 'Erro ao processar!');
 - [ ] Atualizar README.md
 - [ ] Deploy em produção
 
-## 🎓 Recursos para Aprender
+## Recursos para Aprender
 
 ### Padrões de Projeto:
-- **Singleton**: `Config\Database`
-- **Front Controller**: `bootstrap.php`
-- **Repository**: `BaseModel`
-- **Template Method**: `BaseController`
+- **Singleton**: Config\Database
+- **Front Controller**: bootstrap.php
+- **Repository**: BaseModel
+- **Template Method**: BaseController
 
 ### Princípios SOLID:
 - **S**ingle Responsibility: Cada classe uma responsabilidade
@@ -284,13 +278,9 @@ $this->setFlash('error', 'Erro ao processar!');
 - **I**nterface Segregation: Interfaces específicas
 - **D**ependency Inversion: Injeção de dependências
 
-## 📞 Suporte
+## Suporte
 
 - **Documentação**: Leia `ARQUITETURA_MVC.md`
 - **Código**: Explore `app/Core/` para entender as classes base
 - **Email**: Bstech.ti@gmail.com
-
----
-
-**Transforme seu código de "vibe coding" para arquitetura profissional! 🚀**
 

@@ -12,7 +12,7 @@
     # Redirecionar tudo para o front controller MVC
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php [QSA,L]
+    RewriteRule ^(.*)$ mvc_index.php [QSA,L]
 </IfModule>
 
 # Segurança
