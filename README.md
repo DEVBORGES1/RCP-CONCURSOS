@@ -53,18 +53,6 @@ http://localhost/RCP-CONCURSOS/
 - [ ] Perfil do usuário
 - [ ] Cronograma de estudos
 
-## Arquitetura
-
-
-
-**Entender a arquitetura**: [docs/ARQUITETURA_MVC.md](docs/ARQUITETURA_MVC.md)
-
-### Características
-- Separação de responsabilidades (MVC)
-- Orientação a objetos (SOLID)
-- PSR-4 Autoloading
-- Sistema de rotas
-- Segurança (Prepared Statements, hash de senhas)
 
 ## Documentação
 
@@ -86,69 +74,7 @@ http://localhost/RCP-CONCURSOS/
 3. Acesse o dashboard
 4. Comece a estudar!
 
-### Para Desenvolvedores
 
-#### Usar Sistema Antigo (Completo)
-```bash
-http://localhost/RCP-CONCURSOS/index.php
-```
-
-#### Usar Sistema MVC (Novo)
-```bash
-http://localhost/RCP-CONCURSOS/mvc_index.php
-```
-
-#### Ativar Sistema MVC Permanente
-
-```bash
-# Backup
-cp index.php index_old.php
-
-# Ativar MVC
-cp mvc_index.php index.php
-```
-
-#### Criar Nova Funcionalidade
-
-1. **Criar Model**:
-```php
-// app/Models/MinhaEntidade.php
-namespace App\Models;
-use App\Core\BaseModel;
-
-class MinhaEntidade extends BaseModel
-{
-    protected string $table = 'minha_tabela';
-}
-```
-
-2. **Criar Controller**:
-```php
-// app/Controllers/MinhaEntidadeController.php
-namespace App\Controllers;
-use App\Core\BaseController;
-use App\Models\MinhaEntidade;
-
-class MinhaEntidadeController extends BaseController
-{
-    public function index(): void
-    {
-        echo $this->view('minha_entidade/index', $data);
-    }
-}
-```
-
-3. **Criar View**:
-```php
-// app/Views/pages/minha_entidade/index.php
-<h1>Minha Entidade</h1>
-```
-
-4. **Adicionar Rota**:
-```php
-// app/Core/Router.php - método defineRoutes()
-$this->get('/minha-entidade', 'MinhaEntidadeController@index');
-```
 
 Ver guia completo: [docs/README_MIGRACAO.md](docs/README_MIGRACAO.md)
 
