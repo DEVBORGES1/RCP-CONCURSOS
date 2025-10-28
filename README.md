@@ -38,56 +38,14 @@ composer install
 http://localhost/RCP-CONCURSOS/
 ```
 
-## Estrutura do Projeto
-
-```
-RCP-CONCURSOS/
-├── app/                    # Código MVC (Nova arquitetura)
-│   ├── Controllers/        # Controladores
-│   ├── Models/             # Modelos de dados
-│   ├── Views/              # Templates/Páginas
-│   ├── Core/               # Classes base
-│   └── Services/          # Serviços de negócio
-│
-├── old_code/              # Código antigo (em migração)
-│   ├── questoes.php
-│   ├── simulados.php
-│   ├── editais.php
-│   └── ...
-│
-├── docs/                  # Documentação técnica
-│   ├── ARQUITETURA_MVC.md
-│   ├── README_MIGRACAO.md
-│   ├── README_TECNICO.md
-│   └── ...
-│
-├── config/                # Configurações
-│   ├── config.php
-│   └── database.php
-│
-├── classes/               # Classes antigas
-│   ├── Gamificacao.php
-│   ├── AnalisadorEdital.php
-│   └── ...
-│
-├── setup/                 # Scripts de instalação
-├── css/                   # Estilos
-├── uploads/               # Uploads de usuários
-└── archive/               # Arquivos arquivados
-```
-
-**Ver documentação completa**: [docs/ESTRUTURA_PROJETO.md](docs/ESTRUTURA_PROJETO.md)
 
 ## Funcionalidades
 
-### Implementadas (MVC)
 - [x] Homepage moderna e responsiva
 - [x] Sistema de autenticação (login/registro)
 - [x] Dashboard gamificado com estatísticas
 - [x] Sistema de progresso e níveis
 - [x] Gamificação completa (pontos, conquistas, ranking)
-
-### Em Migração
 - [ ] Banco de questões
 - [ ] Simulados personalizados
 - [ ] Upload e análise de editais
@@ -97,33 +55,7 @@ RCP-CONCURSOS/
 
 ## Arquitetura
 
-### Sistema MVC (Novo)
 
-```
-app/
-├── Controllers/    # Lógica de controle HTTP
-│   ├── AuthController.php
-│   ├── DashboardController.php
-│   └── HomeController.php
-│
-├── Models/         # Acesso a dados
-│   ├── Usuario.php
-│   ├── Questao.php
-│   ├── Simulado.php
-│   ├── Edital.php
-│   └── Progresso.php
-│
-├── Views/          # Apresentação
-│   ├── layouts/
-│   ├── pages/
-│   └── components/
-│
-└── Core/           # Classes base
-    ├── BaseModel.php
-    ├── BaseController.php
-    ├── Router.php
-    └── Autoloader.php
-```
 
 **Entender a arquitetura**: [docs/ARQUITETURA_MVC.md](docs/ARQUITETURA_MVC.md)
 
