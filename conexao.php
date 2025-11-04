@@ -1,12 +1,15 @@
 <?php
-$host = "localhost";
-$db   = "concursos";
-$user = "root";
-$pass = "";
+/**
+ * Arquivo de compatibilidade - MIGRAR PARA POO
+ * 
+ * Este arquivo mantém compatibilidade com código antigo.
+ * Use Database::getInstance() em novos códigos.
+ * 
+ * @deprecated Use classes/Database.php
+ */
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (Exception $e) {
-    die("Erro na conexão: " . $e->getMessage());
-}
+require_once __DIR__ . '/classes/Database.php';
+
+// Manter compatibilidade
+$pdo = Database::getInstance()->getConnection();
+

@@ -100,7 +100,78 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-graduation-cap"></i> RCP Concursos</h2>
+            <p>Sistema de Estudos</p>
+        </div>
+        <div class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Navegação</div>
+                <a href="dashboard.php" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="perfil.php" class="nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>Meu Perfil</span>
+                </a>
+                <a href="simulados.php" class="nav-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Simulados</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Estudos</div>
+                <a href="questoes.php" class="nav-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Banco de Questões</span>
+                </a>
+                <a href="videoaulas.php" class="nav-item">
+                    <i class="fas fa-play-circle"></i>
+                    <span>Videoaulas</span>
+                </a>
+                <a href="editais.php" class="nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Meus Editais</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Ferramentas</div>
+                <a href="upload_edital.php" class="nav-item">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload Edital</span>
+                </a>
+                <a href="gerar_cronograma.php" class="nav-item active">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Gerar Cronograma</span>
+                </a>
+                <a href="dashboard_avancado.php" class="nav-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard Avançado</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Conta</div>
+                <a href="logout.php" class="nav-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="content-with-sidebar">
+        <div class="container">
         <!-- Header -->
         <header class="header">
             <div class="header-content">
@@ -281,7 +352,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </section>
         <?php endif; ?>
+        </div>
     </div>
+
+    <script>
+        // Sidebar mobile toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('open');
+                });
+                
+                // Fechar sidebar ao clicar fora dela em mobile
+                document.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                            sidebar.classList.remove('open');
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 
     <style>
         .alert {

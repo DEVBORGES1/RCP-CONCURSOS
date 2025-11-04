@@ -12,6 +12,101 @@ $simulado_id = $_GET['id'] ?? null;
 $predefined_type = $_GET['predefined'] ?? null;
 $view_mode = isset($_GET['view']);
 
+// Processar finalização do simulado
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['finalizar_simulado'])) {
+    $simulado_id = $_POST['simulado_id'];
+    $tempo_gasto = $_POST['tempo_gasto'];
+    $pontos_total = 0;
+    $questoes_corretas = 0;
+    
+    // Verificar se o simulado pertence ao usuário
+    $sql = "SELECT * FROM simulados WHERE id = ? AND usuario_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$simulado_id, $_SESSION["usuario_id"]]);
+    $simulado_check = $stmt->fetch();
+    
+    if (!$simulado_check) {
+        header("Location: simulados.php");
+        exit;
+    }
+    
+    // Processar cada resposta (evitar processar múltiplas vezes a mesma questão)
+    $questoes_processadas = [];
+    foreach ($_POST as $key => $resposta) {
+        if (strpos($key, 'questao_') === 0) {
+            $questao_id = str_replace('questao_', '', $key);
+            
+            // Evitar processar a mesma questão múltiplas vezes
+            if (in_array($questao_id, $questoes_processadas)) {
+                continue;
+            }
+            $questoes_processadas[] = $questao_id;
+            
+            // Obter resposta correta
+            $sql = "SELECT alternativa_correta FROM questoes WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$questao_id]);
+            $resposta_correta = $stmt->fetchColumn();
+            
+            if (!$resposta_correta) continue;
+            
+            // Normalizar respostas para comparação
+            $resposta_normalizada = strtoupper(trim($resposta));
+            $resposta_correta_normalizada = strtoupper(trim($resposta_correta));
+            
+            $acertou = ($resposta_normalizada == $resposta_correta_normalizada) ? 1 : 0;
+            $pontos_questao = $acertou ? 10 : 0;
+            
+            // Atualizar resposta no simulado (evitar duplicatas)
+            $sql = "UPDATE simulados_questoes SET resposta_usuario = ?, correta = ? WHERE simulado_id = ? AND questao_id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$resposta_normalizada, $acertou, $simulado_id, $questao_id]);
+            
+            // Adicionar pontos
+            $pontos_total += $pontos_questao;
+            if ($acertou) $questoes_corretas++;
+            
+            // Registrar resposta individual (evitar duplicatas)
+            $sql = "INSERT IGNORE INTO respostas_usuario (usuario_id, questao_id, resposta, correta, pontos_ganhos) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$_SESSION["usuario_id"], $questao_id, $resposta_normalizada, $acertou, $pontos_questao]);
+        }
+    }
+    
+    // Garantir que questoes_corretas não seja maior que questoes_total
+    $sql = "SELECT questoes_total FROM simulados WHERE id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$simulado_id]);
+    $total_questoes = (int)$stmt->fetchColumn();
+    
+    if ($questoes_corretas > $total_questoes) {
+        $questoes_corretas = $total_questoes;
+    }
+    
+    // Atualizar simulado
+    $sql = "UPDATE simulados SET questoes_corretas = ?, pontuacao_final = ?, tempo_gasto = ? WHERE id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$questoes_corretas, $pontos_total, $tempo_gasto, $simulado_id]);
+    
+    // Adicionar pontos pela conclusão do simulado
+    $gamificacao = new Gamificacao($pdo);
+    $gamificacao->adicionarPontos($_SESSION["usuario_id"], $pontos_total, 'simulado');
+    
+    // Verificar conquista de simulado perfeito
+    $sql = "SELECT questoes_total FROM simulados WHERE id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$simulado_id]);
+    $total_questoes_simulado = $stmt->fetchColumn();
+    
+    if ($questoes_corretas > 0 && $questoes_corretas == $total_questoes_simulado) {
+        $gamificacao->adicionarPontos($_SESSION["usuario_id"], 50, 'perfeicao');
+    }
+    
+    // Redirecionar para visualização dos resultados
+    header("Location: simulado.php?id=" . $simulado_id . "&view=1");
+    exit;
+}
+
 // Processar simulados pré-definidos
 if ($predefined_type) {
     // Debug: Log do tipo de simulado solicitado
@@ -59,9 +154,7 @@ if ($predefined_type) {
     $simulado = $stmt->fetch();
     
     if (!$simulado) {
-        // Debug: Log de criação de novo simulado
-        error_log("SIMULADO DEBUG - Criando novo simulado: {$config['nome']} para usuário: {$_SESSION['usuario_id']}");
-        
+        // Criar novo simulado pré-definido
         // Verificar se há questões suficientes disponíveis
         $sql_verificacao = "SELECT COUNT(DISTINCT q.id) as total_questoes FROM questoes q 
                            LEFT JOIN disciplinas d ON q.disciplina_id = d.id 
@@ -71,73 +164,86 @@ if ($predefined_type) {
         if ($config['disciplinas']) {
             $placeholders_verificacao = str_repeat('?,', count($config['disciplinas']) - 1) . '?';
             $sql_verificacao .= " AND d.nome_disciplina IN ($placeholders_verificacao)";
-            $params_verificacao = array_merge($config['disciplinas'], $params_verificacao);
+            $params_verificacao = array_merge($params_verificacao, $config['disciplinas']);
         }
         
         $stmt_verificacao = $pdo->prepare($sql_verificacao);
         $stmt_verificacao->execute($params_verificacao);
         $total_disponivel = $stmt_verificacao->fetchColumn();
         
-        // Debug: Log de questões disponíveis
-        error_log("SIMULADO DEBUG - Questões disponíveis: $total_disponivel, Solicitadas: {$config['quantidade']}");
+        if ($total_disponivel == 0) {
+            // Não há questões disponíveis, redirecionar
+            header("Location: simulados.php?erro=sem_questoes");
+            exit;
+        }
         
         if ($total_disponivel < $config['quantidade']) {
             // Ajustar quantidade para o que está disponível
             $config['quantidade'] = max(1, $total_disponivel);
-            error_log("SIMULADO DEBUG - Ajustando quantidade para: {$config['quantidade']}");
         }
-        // Criar novo simulado pré-definido
-        $sql = "INSERT INTO simulados (usuario_id, nome, questoes_total) VALUES (?, ?, ?)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$_SESSION["usuario_id"], $config['nome'], $config['quantidade']]);
-        $simulado_id = $pdo->lastInsertId();
         
-        // Selecionar questões baseado no tipo
+        // Selecionar questões baseado no tipo (evitar duplicatas) ANTES de criar o simulado
         $where_clause = "";
         $params = [];
         
         if ($config['disciplinas']) {
             $placeholders = str_repeat('?,', count($config['disciplinas']) - 1) . '?';
-            $where_clause = "WHERE d.nome_disciplina IN ($placeholders)";
+            $where_clause = "AND d.nome_disciplina IN ($placeholders)";
             $params = $config['disciplinas'];
         }
         
         $sql = "SELECT DISTINCT q.* FROM questoes q 
                 LEFT JOIN disciplinas d ON q.disciplina_id = d.id 
+                WHERE q.edital_id IN (SELECT id FROM editais WHERE usuario_id = ?)
                 $where_clause
-                AND q.edital_id IN (SELECT id FROM editais WHERE usuario_id = ?)
-                ORDER BY RAND() LIMIT " . $config['quantidade'];
+                ORDER BY RAND() LIMIT " . (int)$config['quantidade'];
         $params[] = $_SESSION["usuario_id"];
         
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
         $questoes_selecionadas = $stmt->fetchAll();
         
-        // Debug: Log de questões selecionadas
-        error_log("SIMULADO DEBUG - Questões selecionadas (primeira tentativa): " . count($questoes_selecionadas));
-        
         // Se não há questões suficientes, pegar todas as disponíveis (sem duplicatas)
         if (count($questoes_selecionadas) < $config['quantidade']) {
             $sql = "SELECT DISTINCT q.* FROM questoes q 
                     WHERE q.edital_id IN (SELECT id FROM editais WHERE usuario_id = ?)
-                    ORDER BY RAND() LIMIT " . $config['quantidade'];
+                    ORDER BY RAND() LIMIT " . (int)$config['quantidade'];
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$_SESSION["usuario_id"]]);
             $questoes_selecionadas = $stmt->fetchAll();
-            
-            // Debug: Log de questões selecionadas (segunda tentativa)
-            error_log("SIMULADO DEBUG - Questões selecionadas (segunda tentativa): " . count($questoes_selecionadas));
         }
         
-        // Adicionar questões ao simulado (evitar duplicatas)
-        $questoes_ja_adicionadas = [];
+        // Verificar se questões foram selecionadas ANTES de criar o simulado
+        if (empty($questoes_selecionadas)) {
+            // Se não conseguiu selecionar questões, redirecionar
+            header("Location: simulados.php?erro=sem_questoes");
+            exit;
+        }
+        
+        // Criar novo simulado pré-definido
+        $sql = "INSERT INTO simulados (usuario_id, nome, questoes_total) VALUES (?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$_SESSION["usuario_id"], $config['nome'], $config['quantidade']]);
+        $simulado_id = $pdo->lastInsertId();
+        
+        // Adicionar questões ao simulado (evitar duplicatas usando INSERT IGNORE)
+        $questoes_adicionadas = 0;
         foreach ($questoes_selecionadas as $questao) {
-            if (!in_array($questao['id'], $questoes_ja_adicionadas)) {
-                $sql = "INSERT INTO simulados_questoes (simulado_id, questao_id) VALUES (?, ?)";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute([$simulado_id, $questao['id']]);
-                $questoes_ja_adicionadas[] = $questao['id'];
+            $sql = "INSERT IGNORE INTO simulados_questoes (simulado_id, questao_id) VALUES (?, ?)";
+            $stmt = $pdo->prepare($sql);
+            if ($stmt->execute([$simulado_id, $questao['id']])) {
+                $questoes_adicionadas++;
             }
+        }
+        
+        // Verificar se questões foram adicionadas
+        if ($questoes_adicionadas == 0) {
+            // Se não conseguiu adicionar questões, deletar o simulado criado e redirecionar
+            $sql = "DELETE FROM simulados WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$simulado_id]);
+            header("Location: simulados.php?erro=sem_questoes");
+            exit;
         }
         
         // Recarregar dados do simulado
@@ -147,7 +253,79 @@ if ($predefined_type) {
         $simulado = $stmt->fetch();
     } else {
         $simulado_id = $simulado['id'];
+        
+        // Verificar se o simulado já tem questões, se não, adicionar
+        $sql = "SELECT COUNT(*) FROM simulados_questoes WHERE simulado_id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$simulado_id]);
+        $total_questoes_simulado = $stmt->fetchColumn();
+        
+        if ($total_questoes_simulado == 0) {
+            // Simulado existe mas não tem questões, adicionar questões
+            $where_clause = "";
+            $params = [];
+            
+            if ($config['disciplinas']) {
+                $placeholders = str_repeat('?,', count($config['disciplinas']) - 1) . '?';
+                $where_clause = "AND d.nome_disciplina IN ($placeholders)";
+                $params = $config['disciplinas'];
+            }
+            
+            $sql = "SELECT DISTINCT q.* FROM questoes q 
+                    LEFT JOIN disciplinas d ON q.disciplina_id = d.id 
+                    WHERE q.edital_id IN (SELECT id FROM editais WHERE usuario_id = ?)
+                    $where_clause
+                    ORDER BY RAND() LIMIT " . (int)$config['quantidade'];
+            $params[] = $_SESSION["usuario_id"];
+            
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            $questoes_selecionadas = $stmt->fetchAll();
+            
+            // Se não há questões suficientes, pegar todas as disponíveis
+            if (count($questoes_selecionadas) < $config['quantidade']) {
+                $sql = "SELECT DISTINCT q.* FROM questoes q 
+                        WHERE q.edital_id IN (SELECT id FROM editais WHERE usuario_id = ?)
+                        ORDER BY RAND() LIMIT " . (int)$config['quantidade'];
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$_SESSION["usuario_id"]]);
+                $questoes_selecionadas = $stmt->fetchAll();
+            }
+            
+            // Adicionar questões ao simulado (evitar duplicatas)
+            foreach ($questoes_selecionadas as $questao) {
+                $sql = "INSERT IGNORE INTO simulados_questoes (simulado_id, questao_id) VALUES (?, ?)";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$simulado_id, $questao['id']]);
+            }
+        } else {
+            // Limpar questões duplicadas se houver
+            $sql = "DELETE sq1 FROM simulados_questoes sq1
+                    INNER JOIN simulados_questoes sq2 
+                    WHERE sq1.id > sq2.id 
+                    AND sq1.simulado_id = sq2.simulado_id 
+                    AND sq1.questao_id = sq2.questao_id
+                    AND sq1.simulado_id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$simulado_id]);
+        }
     }
+    
+    // Verificar se há questões no simulado antes de continuar
+    $sql = "SELECT COUNT(*) FROM simulados_questoes WHERE simulado_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$simulado_id]);
+    $total_questoes = $stmt->fetchColumn();
+    
+    if ($total_questoes == 0) {
+        // Se não há questões, redirecionar com mensagem de erro
+        header("Location: simulados.php?erro=sem_questoes");
+        exit;
+    }
+    
+    // Redirecionar para o simulado com o ID
+    header("Location: simulado.php?id=" . $simulado_id);
+    exit;
 } else {
     if (!$simulado_id) {
         header("Location: simulados.php");
@@ -166,20 +344,46 @@ if ($predefined_type) {
     }
 }
 
-// Obter questões do simulado
+// Obter questões do simulado (sem duplicatas)
+// Usar subquery para obter apenas o primeiro registro de cada questão
 $sql = "SELECT sq.*, q.*, d.nome_disciplina 
         FROM simulados_questoes sq 
         JOIN questoes q ON sq.questao_id = q.id 
         LEFT JOIN disciplinas d ON q.disciplina_id = d.id
         WHERE sq.simulado_id = ? 
+        AND sq.id IN (
+            SELECT MIN(sq2.id) 
+            FROM simulados_questoes sq2 
+            WHERE sq2.simulado_id = ? 
+            GROUP BY sq2.questao_id
+        )
         ORDER BY sq.id";
 $stmt = $pdo->prepare($sql);
-$stmt->execute([$simulado_id]);
+$stmt->execute([$simulado_id, $simulado_id]);
 $questoes = $stmt->fetchAll();
 
 if (empty($questoes)) {
-    header("Location: simulados.php");
+    header("Location: simulados.php?erro=questoes_vazias");
     exit;
+}
+
+// Corrigir valores incorretos no banco de dados se necessário
+$total_questoes_real = count($questoes);
+if ($simulado['questoes_total'] != $total_questoes_real) {
+    // Atualizar o total de questões no banco
+    $sql = "UPDATE simulados SET questoes_total = ? WHERE id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$total_questoes_real, $simulado_id]);
+    $simulado['questoes_total'] = $total_questoes_real;
+}
+
+// Garantir que questoes_corretas não seja maior que questoes_total
+if ($simulado['questoes_corretas'] !== null && (int)$simulado['questoes_corretas'] > (int)$simulado['questoes_total']) {
+    // Corrigir o valor no banco
+    $sql = "UPDATE simulados SET questoes_corretas = ? WHERE id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$simulado['questoes_total'], $simulado_id]);
+    $simulado['questoes_corretas'] = $simulado['questoes_total'];
 }
 
 $gamificacao = new Gamificacao($pdo);
@@ -304,7 +508,19 @@ $gamificacao = new Gamificacao($pdo);
                             </div>
                             <div class="stat-item">
                                 <i class="fas fa-percentage"></i>
-                                <span><?= round(($simulado['questoes_corretas'] / $simulado['questoes_total']) * 100, 1) ?>%</span>
+                                <?php 
+                                $questoes_corretas_val = (int)$simulado['questoes_corretas'];
+                                $questoes_total_val = (int)$simulado['questoes_total'];
+                                $percentual = 0;
+                                if ($questoes_total_val > 0) {
+                                    $percentual = round(($questoes_corretas_val / $questoes_total_val) * 100, 1);
+                                    // Garantir que não passe de 100%
+                                    if ($percentual > 100) {
+                                        $percentual = 100;
+                                    }
+                                }
+                                ?>
+                                <span><?= $percentual ?>%</span>
                                 <small>Taxa de Acerto</small>
                             </div>
                             <?php if ($simulado['tempo_gasto']): ?>
@@ -322,7 +538,7 @@ $gamificacao = new Gamificacao($pdo);
 
         <!-- Questões -->
         <section class="questoes-section">
-            <form id="simulado-form" method="POST" action="simulados.php">
+            <form id="simulado-form" method="POST" action="simulado.php">
                 <input type="hidden" name="finalizar_simulado" value="1">
                 <input type="hidden" name="simulado_id" value="<?= $simulado_id ?>">
                 <input type="hidden" name="tempo_gasto" id="tempo-gasto" value="0">

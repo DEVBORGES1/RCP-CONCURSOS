@@ -1,6 +1,7 @@
 <?php
 session_start();
 require 'conexao.php';
+require_once 'classes/GamificacaoRefatorada.php';
 
 if (!isset($_SESSION["usuario_id"])) {
     header("Location: login.php");
@@ -9,6 +10,7 @@ if (!isset($_SESSION["usuario_id"])) {
 
 $usuario_id = $_SESSION["usuario_id"];
 $videoaula_id = $_GET['id'] ?? 0;
+$gamificacao = new GamificacaoRefatorada();
 
 // Obter dados da videoaula
 $sql = "SELECT 
@@ -39,6 +41,13 @@ if ($_POST['action'] ?? '' === 'update_progress') {
     $tempo_assistido = $_POST['tempo_assistido'] ?? 0;
     $concluida = $_POST['concluida'] ?? 0;
     
+    // Verificar se estava concluída antes
+    $sql = "SELECT concluida FROM videoaulas_progresso WHERE usuario_id = ? AND videoaula_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$usuario_id, $videoaula_id]);
+    $progresso_anterior = $stmt->fetch();
+    $estava_concluida = $progresso_anterior && $progresso_anterior['concluida'];
+    
     $sql = "INSERT INTO videoaulas_progresso (usuario_id, videoaula_id, tempo_assistido, concluida, data_conclusao) 
             VALUES (?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE 
@@ -48,6 +57,22 @@ if ($_POST['action'] ?? '' === 'update_progress') {
     
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$usuario_id, $videoaula_id, $tempo_assistido, $concluida, $concluida ? date('Y-m-d H:i:s') : null]);
+    
+    // Se acabou de concluir (não estava concluída antes e agora está), adicionar pontos
+    if ($concluida && !$estava_concluida) {
+        $gamificacao->adicionarPontosVideoaula($usuario_id, $videoaula_id);
+        
+        // Verificar se categoria está 100% completa para gerar certificado
+        $sql = "SELECT categoria_id FROM videoaulas WHERE id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$videoaula_id]);
+        $videoaula_info = $stmt->fetch();
+        
+        if ($videoaula_info && $gamificacao->verificarCategoriaCompleta($usuario_id, $videoaula_info['categoria_id'])) {
+            // Marcar que certificado está disponível (será gerado ao acessar)
+            $_SESSION['certificado_disponivel'] = $videoaula_info['categoria_id'];
+        }
+    }
     
     // Retornar JSON para AJAX
     header('Content-Type: application/json');
@@ -64,7 +89,7 @@ if ($videoaula['concluida']) {
 }
 
 // Obter videoaulas relacionadas
-$sql = "SELECT id, titulo, duracao, nivel 
+$sql = "SELECT id, titulo, duracao 
         FROM videoaulas 
         WHERE categoria_id = ? AND id != ? AND ativo = 1 
         ORDER BY ordem, titulo 
@@ -220,7 +245,7 @@ $videoaulas_relacionadas = $stmt->fetchAll();
         
         .video-player {
             width: 100%;
-            height: 400px;
+            height: 500px;
             border-radius: 10px;
             margin-bottom: 20px;
             background: #000;
@@ -229,6 +254,8 @@ $videoaulas_relacionadas = $stmt->fetchAll();
             justify-content: center;
             color: white;
             font-size: 1.2em;
+            overflow: hidden;
+            position: relative;
         }
         
         .videoaula-info {
@@ -428,10 +455,6 @@ $videoaulas_relacionadas = $stmt->fetchAll();
                         <i class="fas fa-clock"></i>
                         <span><?= $videoaula['duracao'] ?> minutos</span>
                     </div>
-                    <div class="meta-item">
-                        <i class="fas fa-signal"></i>
-                        <span class="nivel-badge nivel-<?= $videoaula['nivel'] ?>"><?= ucfirst($videoaula['nivel']) ?></span>
-                    </div>
                     <?php if ($videoaula['concluida']): ?>
                         <div class="meta-item">
                             <i class="fas fa-check-circle"></i>
@@ -445,11 +468,39 @@ $videoaulas_relacionadas = $stmt->fetchAll();
                 <!-- Player e Informações -->
                 <div class="videoaula-player">
                     <div class="video-player" id="videoPlayer">
-                        <div style="text-align: center;">
-                            <i class="fas fa-play-circle" style="font-size: 3em; margin-bottom: 15px;"></i>
-                            <p>Player de Vídeo</p>
-                            <p style="font-size: 0.8em; opacity: 0.7;">Integração com YouTube ou IA em desenvolvimento</p>
-                        </div>
+                        <?php
+                        // Extrair ID do vídeo do YouTube
+                        $url_video = $videoaula['url_video'];
+                        $video_id = null;
+                        
+                        // Verificar se já está em formato embed
+                        if (strpos($url_video, 'youtube.com/embed/') !== false) {
+                            preg_match('/embed\/([a-zA-Z0-9_-]{11})/', $url_video, $matches);
+                            $video_id = $matches[1] ?? null;
+                        } elseif (strpos($url_video, 'youtu.be/') !== false) {
+                            preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})/', $url_video, $matches);
+                            $video_id = $matches[1] ?? null;
+                        } elseif (strpos($url_video, 'youtube.com/watch') !== false) {
+                            preg_match('/[?&]v=([a-zA-Z0-9_-]{11})/', $url_video, $matches);
+                            $video_id = $matches[1] ?? null;
+                        }
+                        
+                        if ($video_id):
+                        ?>
+                            <iframe id="ytplayer" width="100%" height="100%" 
+                                src="https://www.youtube.com/embed/<?= $video_id ?>?rel=0&modestbranding=1&enablejsapi=1" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen
+                                style="border-radius: 10px;">
+                            </iframe>
+                        <?php else: ?>
+                            <div style="text-align: center; padding: 50px;">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 3em; margin-bottom: 15px; color: #f39c12;"></i>
+                                <p>URL do vídeo inválida ou não reconhecida</p>
+                                <p style="font-size: 0.8em; opacity: 0.7;">URL: <?= htmlspecialchars(substr($url_video, 0, 100)) ?></p>
+                            </div>
+                        <?php endif; ?>
                     </div>
                     
                     <div class="videoaula-info">
@@ -509,7 +560,7 @@ $videoaulas_relacionadas = $stmt->fetchAll();
                                         </div>
                                         <div class="related-item-info">
                                             <h4><?= htmlspecialchars($relacionada['titulo']) ?></h4>
-                                            <p><?= $relacionada['duracao'] ?> min • <?= ucfirst($relacionada['nivel']) ?></p>
+                                            <p><?= $relacionada['duracao'] ?> min</p>
                                         </div>
                                     </a>
                                 <?php endforeach; ?>
@@ -556,22 +607,66 @@ $videoaulas_relacionadas = $stmt->fetchAll();
             });
         }
         
-        // Simular progresso automático (para demonstração)
-        let tempoSimulado = <?= $videoaula['tempo_assistido'] ?>;
-        const duracaoTotal = <?= $videoaula['duracao'] * 60 ?>;
+        // Rastrear progresso do vídeo do YouTube
+        <?php if ($video_id): ?>
+        let tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        let firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
         
+        let ytPlayer;
+        let tempoInicial = <?= $videoaula['tempo_assistido'] ?>;
+        let ultimaAtualizacao = Date.now();
+        
+        function onYouTubeIframeAPIReady() {
+            ytPlayer = new YT.Player('ytplayer', {
+                events: {
+                    'onStateChange': onPlayerStateChange,
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+        
+        function onPlayerReady(event) {
+            // Se houver tempo assistido, tentar retomar de onde parou
+            if (tempoInicial > 0 && !<?= $videoaula['concluida'] ? 'true' : 'false' ?>) {
+                event.target.seekTo(tempoInicial, true);
+            }
+        }
+        
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.ENDED) {
+                // Vídeo concluído
+                const duracaoTotal = ytPlayer.getDuration();
+                atualizarProgresso(Math.floor(duracaoTotal), 1);
+            }
+        }
+        
+        // Atualizar progresso periodicamente
         if (!<?= $videoaula['concluida'] ? 'true' : 'false' ?>) {
             setInterval(() => {
-                tempoSimulado += 10; // Simula 10 segundos a cada 10 segundos
-                
-                if (tempoSimulado >= duracaoTotal) {
-                    tempoSimulado = duracaoTotal;
-                    atualizarProgresso(tempoSimulado, 1);
-                } else {
-                    atualizarProgresso(tempoSimulado, 0);
+                if (ytPlayer && ytPlayer.getCurrentTime) {
+                    try {
+                        const tempoAtual = Math.floor(ytPlayer.getCurrentTime());
+                        const duracaoTotal = ytPlayer.getDuration();
+                        const estado = ytPlayer.getPlayerState();
+                        
+                        // Só atualizar se o vídeo estiver sendo reproduzido
+                        if (estado == YT.PlayerState.PLAYING && tempoAtual > 0) {
+                            // Atualizar a cada 30 segundos
+                            if (Date.now() - ultimaAtualizacao > 30000) {
+                                const concluida = tempoAtual >= (duracaoTotal * 0.95); // 95% = concluído
+                                atualizarProgresso(tempoAtual, concluida ? 1 : 0);
+                                ultimaAtualizacao = Date.now();
+                            }
+                        }
+                    } catch(e) {
+                        // Erro silencioso - pode acontecer se o iframe ainda não estiver pronto
+                    }
                 }
-            }, 10000); // Atualiza a cada 10 segundos
+            }, 5000); // Verificar a cada 5 segundos
         }
+        <?php endif; ?>
     </script>
 </body>
 </html>

@@ -1,30 +1,25 @@
 <?php
 session_start();
-require 'conexao.php';
-require 'classes/Gamificacao.php';
+require_once 'classes/Database.php';
+require_once 'classes/User.php';
+require_once 'classes/GamificacaoRefatorada.php';
 
 $mensagem = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST["email"];
-    $senha = $_POST["senha"];
+    $user = new User();
+    
+    if ($user->authenticate($_POST["email"], $_POST["senha"])) {
+        $_SESSION["usuario_id"] = $user->getId();
 
-    $sql = "SELECT * FROM usuarios WHERE email = ?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$email]);
-    $user = $stmt->fetch();
-
-    if ($user && password_verify($senha, $user['senha_hash'])) {
-        $_SESSION["usuario_id"] = $user["id"];
-
-        // Inicializar progresso do usuário usando a classe Gamificacao
-        $gamificacao = new Gamificacao($pdo);
+        // Inicializar progresso do usuário usando a classe GamificacaoRefatorada
+        $gamificacao = new GamificacaoRefatorada();
 
         // Garantir que o usuário tenha progresso inicializado
-        $gamificacao->garantirProgressoUsuario($user["id"]);
+        $gamificacao->garantirProgressoUsuario($user->getId());
 
         // Atualizar streak
-        $gamificacao->atualizarStreak($user["id"]);
+        $gamificacao->atualizarStreak($user->getId());
 
         header("Location: dashboard.php");
         exit;

@@ -56,6 +56,11 @@ if ($_POST['action'] ?? '' === 'update_progress') {
     $tempo_assistido = $_POST['tempo_assistido'] ?? 0;
     $concluida = $_POST['concluida'] ?? 0;
     
+    if (!$videoaula_id) {
+        header("Location: videoaulas_categoria.php?id=$categoria_id");
+        exit;
+    }
+    
     $sql = "INSERT INTO videoaulas_progresso (usuario_id, videoaula_id, tempo_assistido, concluida, data_conclusao) 
             VALUES (?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE 
@@ -483,6 +488,11 @@ if ($_POST['action'] ?? '' === 'update_progress') {
                 <a href="videoaulas_categoria.php?id=<?= $categoria_id ?>&view=stats" class="tab <?= $view === 'stats' ? 'active' : '' ?>">
                     <i class="fas fa-chart-bar"></i> Estatísticas
                 </a>
+                <?php if ($porcentagem_concluida == 100): ?>
+                    <a href="gerar_certificado.php?categoria_id=<?= $categoria_id ?>&acao=visualizar" class="tab" style="background: #27ae60; color: white;">
+                        <i class="fas fa-certificate"></i> Ver Certificado
+                    </a>
+                <?php endif; ?>
             </div>
 
             <?php if ($view === 'videos'): ?>
@@ -513,7 +523,6 @@ if ($_POST['action'] ?? '' === 'update_progress') {
                                         <p><?= htmlspecialchars($videoaula['descricao']) ?></p>
                                     </div>
                                     <div class="videoaula-meta">
-                                        <span class="nivel-badge nivel-<?= $videoaula['nivel'] ?>"><?= ucfirst($videoaula['nivel']) ?></span>
                                         <span class="duracao">
                                             <i class="fas fa-clock"></i> <?= $videoaula['duracao'] ?> min
                                         </span>

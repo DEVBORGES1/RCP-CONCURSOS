@@ -1,0 +1,46 @@
+# RCP-CONCURSOS - Git Ignore
+
+# MySQL Data Directory
+mysql-8.4/
+
+# Logs
+*.log
+*.err
+
+# Temporary files
+*.tmp
+*.swp
+*.bak
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Uploads - Apenas ignorar arquivos enviados, manter estrutura
+uploads/*
+!uploads/.gitkeep
+
+# Caches
+cache/
+tmp/
+
+# Composer (se implementar no futuro)
+/vendor/
+composer.lock
+
+# Node modules (se implementar no futuro)
+node_modules/
+package-lock.json
+
+# Environment
+.env
+.env.local
+
+

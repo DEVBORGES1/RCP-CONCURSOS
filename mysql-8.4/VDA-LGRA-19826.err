@@ -1,6 +1,0 @@
-2025-10-22T00:22:18.647648Z 0 [System] [MY-015017] [Server] MySQL Server Initialization - start.
-2025-10-22T00:22:18.654931Z 0 [System] [MY-013169] [Server] C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysqld.exe (mysqld 8.4.3) initializing of server in progress as process 18280
-2025-10-22T00:22:18.660035Z 0 [ERROR] [MY-010457] [Server] --initialize specified but the data directory has files in it. Aborting.
-2025-10-22T00:22:18.660682Z 0 [ERROR] [MY-013236] [Server] The designated data directory C:\laragon\www\RCP-CONCURSOS\mysql-8.4\ is unusable. You can remove all files that the server added to it.
-2025-10-22T00:22:18.670374Z 0 [ERROR] [MY-010119] [Server] Aborting
-2025-10-22T00:22:18.670817Z 0 [System] [MY-015018] [Server] MySQL Server Initialization - end.

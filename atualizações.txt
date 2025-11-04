@@ -1,0 +1,13 @@
+- METAS NÃO ATRIBUIDAS
+- vinculo da pontuação do usuario e das conquistas estão dando problema e o ranking geral não está aparecendo.
+- Quando terminar uma aula, próxima "aula" é um simulado de 10 questões
+- Durante o evento de conclusão da aula:
+
+Gerar (ou vincular) um simulado com 10 questões relacionadas ao tema e ao terminar o simulado ele ganhará 10 pontos por simulado.
+Abrir modal ou redirecionar para o simulado imediatamente (sem sair do fluxo).
+Usar transação ao gerar e vincular o simulado para evitar estados inconsistentes.
+Ao finalizar uma disciplina, pular para a próxima sem sair da página,
+colocar uma sidebar das diciplinas que estão vinculadas a materia a direita e as aulas que são as proximas para navegação rapida do usuario.
+
+Organização do código por pastas e remoção de arquivos não usados
+Reestruturar o projeto em um POO. Fazer uma limpeza: identificar arquivos órfãos, testar antes de remover

@@ -1,7 +1,8 @@
 <?php
 session_start();
-require 'conexao.php';
-require 'classes/Gamificacao.php';
+require_once 'classes/Database.php';
+require_once 'classes/User.php';
+require_once 'classes/GamificacaoRefatorada.php';
 
 $mensagem = "";
 $erro = "";
@@ -22,39 +23,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $erro = "Email inválido.";
     } else {
-        // Verificar se email já existe
-        $sql = "SELECT COUNT(*) FROM usuarios WHERE email = ?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$email]);
+        // Cadastrar usuário usando POO
+        $user = new User();
         
-        if ($stmt->fetchColumn() > 0) {
-            $erro = "Este email já está cadastrado.";
-        } else {
-            // Cadastrar usuário
-            $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
-            $sql = "INSERT INTO usuarios (nome, email, senha_hash) VALUES (?, ?, ?)";
-            $stmt = $pdo->prepare($sql);
+        if ($user->create($nome, $email, $senha)) {
+            $usuario_id = $user->getId();
             
-            if ($stmt->execute([$nome, $email, $senha_hash])) {
-                $usuario_id = $pdo->lastInsertId();
-                
-                // Inicializar progresso do usuário usando a classe Gamificacao
-                $gamificacao = new Gamificacao($pdo);
-                $gamificacao->garantirProgressoUsuario($usuario_id);
-                
-                // Adicionar pontos de boas-vindas
-                $gamificacao->adicionarPontos($usuario_id, 50, 'primeiro_acesso');
-                
-                $mensagem = "Cadastro realizado com sucesso! Você ganhou 50 pontos de boas-vindas!";
-                
-                // Fazer login automático
-                $_SESSION["usuario_id"] = $usuario_id;
-                
-                // Redirecionar após 2 segundos
-                header("refresh:2;url=dashboard.php");
-            } else {
-                $erro = "Erro ao cadastrar usuário. Tente novamente.";
-            }
+            // Inicializar progresso do usuário usando a classe GamificacaoRefatorada
+            $gamificacao = new GamificacaoRefatorada();
+            $gamificacao->garantirProgressoUsuario($usuario_id);
+            
+            // Adicionar pontos de boas-vindas
+            $gamificacao->adicionarPontos($usuario_id, 50, 'primeiro_acesso');
+            
+            $mensagem = "Cadastro realizado com sucesso! Você ganhou 50 pontos de boas-vindas!";
+            
+            // Fazer login automático
+            $_SESSION["usuario_id"] = $usuario_id;
+            
+            // Redirecionar após 2 segundos
+            header("refresh:2;url=dashboard.php");
+        } else {
+            $erro = "Erro ao cadastrar usuário. Este email já está cadastrado.";
         }
     }
 }

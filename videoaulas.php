@@ -9,6 +9,39 @@ if (!isset($_SESSION["usuario_id"])) {
 
 $usuario_id = $_SESSION["usuario_id"];
 
+// Verificar se existem categorias, se não, criar as padrão
+$sql_check = "SELECT COUNT(*) FROM videoaulas_categorias WHERE ativo = 1";
+$stmt_check = $pdo->query($sql_check);
+$total_categorias = $stmt_check->fetchColumn();
+
+if ($total_categorias == 0) {
+    // Inserir categorias padrão automaticamente
+    $categorias_padrao = [
+        ['Português', 'Língua Portuguesa - Gramática, Interpretação de Texto, Redação', '#3498db', 'fas fa-book', 1],
+        ['Matemática', 'Matemática - Álgebra, Geometria, Trigonometria, Estatística', '#e74c3c', 'fas fa-calculator', 2],
+        ['Raciocínio Lógico', 'Raciocínio Lógico e Quantitativo', '#9b59b6', 'fas fa-brain', 3],
+        ['Direito Constitucional', 'Direito Constitucional e Legislação', '#16a085', 'fas fa-gavel', 4],
+        ['Direito Administrativo', 'Direito Administrativo e Licitações', '#27ae60', 'fas fa-landmark', 5],
+        ['Direito Penal', 'Direito Penal e Processo Penal', '#c0392b', 'fas fa-balance-scale', 6],
+        ['Direito Civil', 'Direito Civil e Processo Civil', '#2980b9', 'fas fa-scroll', 7],
+        ['Direito do Trabalho', 'Direito do Trabalho e Processo do Trabalho', '#f39c12', 'fas fa-briefcase', 8],
+        ['Direito Tributário', 'Direito Tributário e Fiscal', '#e67e22', 'fas fa-file-invoice-dollar', 9],
+        ['Informática', 'Informática Básica e Avançada', '#1abc9c', 'fas fa-laptop-code', 10],
+        ['Atualidades', 'Atualidades e Conhecimentos Gerais', '#34495e', 'fas fa-newspaper', 11],
+        ['Administração Pública', 'Administração Pública e Gestão', '#95a5a6', 'fas fa-building', 12],
+        ['Legislação Específica', 'Legislação Específica do Cargo', '#2c3e50', 'fas fa-file-alt', 13],
+        ['Noções de Gestão', 'Noções de Gestão Pública e Organizacional', '#7f8c8d', 'fas fa-chart-line', 14],
+        ['Ética', 'Ética no Serviço Público', '#8e44ad', 'fas fa-hands-helping', 15]
+    ];
+    
+    $sql_insert = "INSERT INTO videoaulas_categorias (nome, descricao, cor, icone, ordem, ativo) VALUES (?, ?, ?, ?, ?, 1)";
+    $stmt_insert = $pdo->prepare($sql_insert);
+    
+    foreach ($categorias_padrao as $cat) {
+        $stmt_insert->execute($cat);
+    }
+}
+
 // Obter categorias com progresso
 $sql = "SELECT 
             vc.*,
@@ -110,7 +143,7 @@ $stats = $stmt->fetch();
             padding: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
-            border: 2px solid transparent;
+            border: 3px solid transparent;
             position: relative;
             overflow: hidden;
         }
@@ -118,6 +151,28 @@ $stats = $stmt->fetch();
         .categoria-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-color: var(--categoria-cor);
+        }
+        
+        .categoria-card.completa {
+            border-color: #27ae60;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9f4 100%);
+        }
+        
+        .badge-completo {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #27ae60;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 3px 10px rgba(39, 174, 96, 0.3);
         }
         
         .categoria-card::before {
@@ -317,7 +372,78 @@ $stats = $stmt->fetch();
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-graduation-cap"></i> RCP Concursos</h2>
+            <p>Sistema de Estudos</p>
+        </div>
+        <div class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Navegação</div>
+                <a href="dashboard.php" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="perfil.php" class="nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>Meu Perfil</span>
+                </a>
+                <a href="simulados.php" class="nav-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Simulados</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Estudos</div>
+                <a href="questoes.php" class="nav-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Banco de Questões</span>
+                </a>
+                <a href="videoaulas.php" class="nav-item active">
+                    <i class="fas fa-play-circle"></i>
+                    <span>Videoaulas</span>
+                </a>
+                <a href="editais.php" class="nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Meus Editais</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Ferramentas</div>
+                <a href="upload_edital.php" class="nav-item">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload Edital</span>
+                </a>
+                <a href="gerar_cronograma.php" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Gerar Cronograma</span>
+                </a>
+                <a href="dashboard_avancado.php" class="nav-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard Avançado</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Conta</div>
+                <a href="logout.php" class="nav-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="content-with-sidebar">
+        <div class="container">
         <!-- Header -->
         <header class="header">
             <div class="header-content">
@@ -355,13 +481,18 @@ $stats = $stmt->fetch();
         <?php if (empty($categorias)): ?>
             <div class="empty-state">
                 <i class="fas fa-video"></i>
-                <h3>Nenhuma categoria encontrada</h3>
-                <p>As videoaulas ainda não foram configuradas.</p>
+                <h3>Nenhuma matéria disponível</h3>
+                <p>Entre em contato com o administrador para configurar as matérias de videoaulas.</p>
             </div>
         <?php else: ?>
             <div class="categorias-grid">
                 <?php foreach ($categorias as $categoria): ?>
-                    <div class="categoria-card" style="--categoria-cor: <?= $categoria['cor'] ?>; --categoria-cor-light: <?= $categoria['cor'] ?>88; --categoria-cor-dark: <?= $categoria['cor'] ?>dd;">
+                    <div class="categoria-card <?= $categoria['porcentagem_concluida'] == 100 ? 'completa' : '' ?>" style="--categoria-cor: <?= $categoria['cor'] ?>; --categoria-cor-light: <?= $categoria['cor'] ?>88; --categoria-cor-dark: <?= $categoria['cor'] ?>dd;">
+                        <?php if ($categoria['porcentagem_concluida'] == 100): ?>
+                            <div class="badge-completo">
+                                <i class="fas fa-check-circle"></i> Completo!
+                            </div>
+                        <?php endif; ?>
                         <div class="categoria-header">
                             <div class="categoria-icon">
                                 <i class="<?= $categoria['icone'] ?>"></i>
@@ -398,17 +529,43 @@ $stats = $stmt->fetch();
                         </div>
 
                         <div class="categoria-actions">
-                            <a href="videoaulas_categoria.php?id=<?= $categoria['id'] ?>" class="btn-categoria btn-primary">
-                                <i class="fas fa-play"></i> Assistir
+                            <a href="videoaulas_temas.php?categoria_id=<?= $categoria['id'] ?>" class="btn-categoria btn-primary">
+                                <i class="fas fa-book-open"></i> Ver Disciplinas
                             </a>
-                            <a href="videoaulas_categoria.php?id=<?= $categoria['id'] ?>&view=stats" class="btn-categoria btn-secondary">
-                                <i class="fas fa-chart-bar"></i> Estatísticas
-                            </a>
+                            <?php if ($categoria['porcentagem_concluida'] == 100): ?>
+                                <a href="gerar_certificado.php?categoria_id=<?= $categoria['id'] ?>" class="btn-categoria" style="background: #27ae60; color: white;">
+                                    <i class="fas fa-certificate"></i> Certificado
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
+        </div>
     </div>
+
+    <script>
+        // Sidebar mobile toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('open');
+                });
+                
+                // Fechar sidebar ao clicar fora dela em mobile
+                document.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                            sidebar.classList.remove('open');
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

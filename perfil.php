@@ -1,14 +1,14 @@
 <?php
 session_start();
-require 'conexao.php';
-require 'classes/Gamificacao.php';
+require_once 'classes/Database.php';
+require_once 'classes/GamificacaoRefatorada.php';
 
 if (!isset($_SESSION["usuario_id"])) {
     header("Location: login.php");
     exit;
 }
 
-$gamificacao = new Gamificacao($pdo);
+$gamificacao = new GamificacaoRefatorada();
 $gamificacao->atualizarStreak($_SESSION["usuario_id"]);
 $gamificacao->verificarTodasConquistas($_SESSION["usuario_id"]);
 
@@ -29,6 +29,9 @@ $nivel_usuario = isset($dados_usuario['nivel']) ? (int)$dados_usuario['nivel'] :
 $pontos_usuario = isset($dados_usuario['pontos_total']) ? (int)$dados_usuario['pontos_total'] : 0;
 $streak_usuario = isset($dados_usuario['streak_dias']) ? (int)$dados_usuario['streak_dias'] : 0;
 
+// Obter outras estatísticas usando Database
+$pdo = Database::getInstance()->getConnection();
+
 // Obter melhor pontuação em simulado
 $stmt = $pdo->prepare("SELECT MAX(pontuacao_final) as melhor_pontuacao FROM simulados WHERE usuario_id = ? AND pontuacao_final IS NOT NULL");
 $stmt->execute([$_SESSION["usuario_id"]]);
@@ -44,10 +47,14 @@ $stmt = $pdo->prepare("SELECT COUNT(*) as total_simulados FROM simulados WHERE u
 $stmt->execute([$_SESSION["usuario_id"]]);
 $total_simulados = $stmt->fetchColumn() ?: 0;
 
-// Obter certificados (videoaulas assistidas)
-$stmt = $pdo->prepare("SELECT COUNT(*) as certificados FROM videoaulas_progresso WHERE usuario_id = ? AND concluida = 1");
-$stmt->execute([$_SESSION["usuario_id"]]);
-$total_certificados = $stmt->fetchColumn() ?: 0;
+// Obter certificados (videoaulas assistidas) - verifica se tabela existe
+try {
+    $stmt = $pdo->prepare("SELECT COUNT(*) as certificados FROM videoaulas_progresso WHERE usuario_id = ? AND concluida = 1");
+    $stmt->execute([$_SESSION["usuario_id"]]);
+    $total_certificados = $stmt->fetchColumn() ?: 0;
+} catch (PDOException $e) {
+    $total_certificados = 0;
+}
 ?>
 
 <!DOCTYPE html>
